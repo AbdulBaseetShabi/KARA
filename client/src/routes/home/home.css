@@ -12,16 +12,6 @@
     box-shadow:0px 0px 0px 9px black;
 }
 
-#login-button{
-    text-align: center;
-    position: relative;
-    border: solid 1px black;
-    margin: 0 5px 10px 5px;
-    text-transform: uppercase;
-    color: #fffffe!important;
-
-}
-
 #login-button:hover{
     cursor: pointer;
     background-color: #e8e2db;

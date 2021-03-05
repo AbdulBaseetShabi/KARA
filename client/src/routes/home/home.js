@@ -14,7 +14,7 @@ function Home(props) {
             <label className="center-label">Password</label>
             <input className="center-div"type="password"></input>
             <hr/>
-            <a href="/databases" onClick={props.changeLocation}><div id="login-button">Login</div></a>
+            <a href="/databases" onClick={props.changeLocation}><div id="login-button" className="button">Login</div></a>
         </div>
     </div>
   );
