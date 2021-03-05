@@ -21,14 +21,12 @@ function TableView() {
       <div className="row">
       {mock_data.map((db, index) => {
             return (
-              <div index={index} className="col-4 card">
+              <div index={index} className="col-4 custom-card">
                 <label className="center-label db-name-label">{db.table_name}</label>
                 <hr className="header-hr" />
-                <label>Number of Entries: {db.no_of_entries} records</label>
-                <label>Number of Columns: {db.no_of_colums} columns</label>
-                <br />
-                <label>Size: {db.size}</label>
-                <br />
+                <label>Number of Entries: {db.no_of_entries} records</label> <br/>
+                <label>Number of Columns: {db.no_of_colums} columns</label> <br/>
+                <label>Size: {db.size}</label> <br/>
                 <label>Date Created: {db.date_created}</label>
                 <br />
                 <a href="/table">
@@ -43,7 +41,7 @@ function TableView() {
               </div>
             );
           })}
-          <div className="col-4 card">
+          <div className="col-4 custom-card">
             <a href="/databases">
               <label className="center-label" id="add-new-db-label">ADD A NEW TABLE</label>
               <hr className="header-hr" />
