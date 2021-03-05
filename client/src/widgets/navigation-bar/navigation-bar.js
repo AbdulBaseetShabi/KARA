@@ -1,7 +1,10 @@
 import React from "react";
 import "./navigation-bar.css";
 
-function NavigationBar() {
+function NavigationBar(props) {
+  if (props.currentPath === '/home') {
+    return null;
+  }
   return (
     <div>Nav Bar</div>
   );

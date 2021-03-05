@@ -1,7 +1,10 @@
 import React from "react";
 import "./footer.css";
 
-function Footer() {
+function Footer(props) {
+  if (props.currentPath === '/home') {
+    return null;
+  }
   return (
     <div>Footer</div>
   );
