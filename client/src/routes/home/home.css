@@ -18,13 +18,14 @@
     border: solid 1px black;
     margin: 0 5px 10px 5px;
     text-transform: uppercase;
+    color: #fffffe!important;
 
 }
 
 #login-button:hover{
     cursor: pointer;
     background-color: #e8e2db;
-    color: #1A3263;
+    color: #1A3263!important;
 }
 
 
