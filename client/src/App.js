@@ -15,39 +15,47 @@ import TableEdit from "./routes/table/edit/table-edit";
 import Home from "./routes/home/home";
 import Footer from "./widgets/footer/footer";
 
-function App() {
-  return (
-    <Router>
-      <NavigationBar></NavigationBar>
-      <Switch>
-        <Route exact path="/table/view">
-          <TableView />
-        </Route>
-        <Route exact path="/table/edit">
-          <TableEdit />
-        </Route>
-        <Route exact path="/databases/view">
-          <DatabasesView />
-        </Route>
-        <Route exact path="/databases/edit">
-          <DatabasesEdit />
-        </Route>
-        <Route path="/home">
-          <Home />
-        </Route>
-        <Route path="/table">
-          <Redirect to="/table/view" />
-        </Route>
-        <Route path="/databases">
-          <Redirect to="/databases/view" />
-        </Route>
-        <Route path="/">
-            <Redirect to="/home" />
-        </Route>
-      </Switch>
-      <Footer></Footer>
-    </Router>
-  );
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentPath: window.location.pathname,
+    }
+  }
+  render() {
+    return (
+      <Router>
+        <NavigationBar currentPath={this.state.currentPath}></NavigationBar>
+        <Switch>
+          <Route exact path="/table/view">
+            <TableView />
+          </Route>
+          <Route exact path="/table/edit">
+            <TableEdit />
+          </Route>
+          <Route exact path="/databases/view">
+            <DatabasesView />
+          </Route>
+          <Route exact path="/databases/edit">
+            <DatabasesEdit />
+          </Route>
+          <Route path="/home">
+            <Home />
+          </Route>
+          <Route path="/table">
+            <Redirect to="/table/view" />
+          </Route>
+          <Route path="/databases">
+            <Redirect to="/databases/view" />
+          </Route>
+          <Route path="/">
+              <Redirect to="/home" />
+          </Route>
+        </Switch>
+        <Footer currentPath={this.state.currentPath}></Footer>
+      </Router>
+    );
+  }
 }
 
 export default App;
