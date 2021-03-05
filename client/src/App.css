@@ -1,0 +1,9 @@
+.center-label{
+    text-align: center;
+    width: 100%;
+}
+
+.center-div{
+    margin: 0 auto;
+    display: block;
+}
