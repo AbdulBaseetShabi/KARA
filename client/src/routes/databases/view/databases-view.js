@@ -21,7 +21,7 @@ class DatabasesView extends React.Component {
   render() {
     return (
       <div id="db-view-container">
-        <label className="center-label db-view-label">
+        <label className="center-label page-label">
           Databases in Current Server
         </label>
         <hr className="header-hr" />
