@@ -39,3 +39,10 @@
     border: 1px solid black;
     margin: 7px;
 }
+
+.fa-plus{
+    text-align: center;
+    width: 100%;
+    color: black;
+    line-height: inherit;
+}

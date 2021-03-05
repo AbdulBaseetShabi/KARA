@@ -5,12 +5,6 @@
     /* color: #fffffe; */
 }
 
-.fa-plus{
-    text-align: center;
-    width: 100%;
-    color: black;
-}
-
 #add-new-db-label,.db-name-label{
     color: black;
     margin-top: 10px;
