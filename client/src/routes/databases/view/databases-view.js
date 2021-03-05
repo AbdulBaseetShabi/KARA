@@ -22,7 +22,7 @@ class DatabasesView extends React.Component {
     return (
       <div id="db-view-container">
         <label className="center-label" id="db-view-label">
-          Databases View
+          Databases in Current Server
         </label>
         <hr className="header-hr" />
         <div className="row">
@@ -38,13 +38,13 @@ class DatabasesView extends React.Component {
                 <label>Date Created: {db.date_created}</label>
                 <br />
                 <a href="/table">
-                  <div id="login-button">View more info</div>
+                  <div id="view-more-button" className="button">View more info</div>
                 </a>
                 <a href="/databases">
-                  <div id="login-button">Edit</div>
+                  <div id="edit-button" className="button">Edit</div>
                 </a>
                 <a href="/databases">
-                  <div id="login-button">DELETE</div>
+                  <div id="delete-button" className="button">DELETE</div>
                 </a>
               </div>
             );

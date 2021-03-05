@@ -10,6 +10,7 @@
     margin-bottom: 0;
     font-size: large;
     font-weight: bold;
+    text-transform: uppercase;
 }
 
 .db-card{
@@ -27,4 +28,21 @@
     color: black;
     margin-top: 10px;
     margin-bottom: 0;
+}
+
+#delete-button:hover{
+    background-color: #941305;
+    background-color: #030303;
+    text-decoration: none;
+}
+
+#edit-button:hover{
+    background-color: #727fc2;
+    background-color: #030303;
+    text-decoration: none;
+}
+
+#view-more-button:hover{
+    background-color: #030303;
+    text-decoration: none;
 }
