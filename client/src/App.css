@@ -7,3 +7,13 @@
     margin: 0 auto;
     display: block;
 }
+
+.header-hr{
+    width: 70%;
+}
+
+.row{
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
