@@ -5,19 +5,6 @@
     /* color: #fffffe; */
 }
 
-#db-view-label{
-    margin-top: 10px;
-    margin-bottom: 0;
-    font-size: large;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.db-card{
-    border: 1px solid black;
-    margin: 7px;
-}
-
 .fa-plus{
     text-align: center;
     width: 100%;
