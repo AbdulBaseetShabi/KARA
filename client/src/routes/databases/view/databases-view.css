@@ -1,0 +1,30 @@
+#db-view-container{
+    width: 100%;
+    height: 100%;
+    background-color: #e8e2db;
+    /* color: #fffffe; */
+}
+
+#db-view-label{
+    margin-top: 10px;
+    margin-bottom: 0;
+    font-size: large;
+    font-weight: bold;
+}
+
+.db-card{
+    border: 1px solid black;
+    margin: 7px;
+}
+
+.fa-plus{
+    text-align: center;
+    width: 100%;
+    color: black;
+}
+
+#add-new-db-label,.db-name-label{
+    color: black;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
