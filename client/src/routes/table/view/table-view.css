@@ -4,3 +4,8 @@
     background-color: #e8e2db;
     /* color: #fffffe; */
 }
+
+#db-name-selected{
+    text-decoration: underline;
+    font-style: italic;
+}

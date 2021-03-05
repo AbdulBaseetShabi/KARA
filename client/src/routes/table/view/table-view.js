@@ -15,7 +15,7 @@ function TableView() {
   return (
     <div id="table-view-container">
       <label className="center-label page-label">
-        Tables in the Trivia Database
+        Tables in the <span id="db-name-selected">Trivia</span> Database
       </label>
       <hr className="header-hr" />
       <div className="row">
