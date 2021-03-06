@@ -1,6 +1,6 @@
 #db-view-container{
     width: 100%;
-    height: calc(100% - 34px);
+    height: calc(100% - 44px);
     background-color: #e8e2db;
     /* color: #fffffe; */
 }
@@ -14,16 +14,19 @@
 #delete-button:hover{
     background-color: #941305;
     background-color: #030303;
+    color: #FFFFFE!important;
     text-decoration: none;
 }
 
 #edit-button:hover{
     background-color: #727fc2;
     background-color: #030303;
+    color: #FFFFFE!important;
     text-decoration: none;
 }
 
 #view-more-button:hover{
     background-color: #030303;
     text-decoration: none;
+    color: #FFFFFE!important;
 }
