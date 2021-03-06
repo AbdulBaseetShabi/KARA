@@ -6,8 +6,13 @@ function NavigationBar(props) {
     return null;
   }
   return (
-    <div>Nav Bar</div>
-  );
+
+    <div class= "navbar navbar-expand-lg navbar-light" style={{ backgroundColor: "#1A3263" }}>
+        <a class="navbar" href="/table" style={{ color: "#f8f9fa"}} ><div>Table</div></a>
+        <a class="navbar" href="/databases" style={{ color: "#f8f9fa"}}><div>Database</div></a>
+        <a class="navbar" href="/Logout" style={{ color: "#f8f9fa"}}><div>Logout</div></a>
+    </div>
+  )
 }
 
 export default NavigationBar;
