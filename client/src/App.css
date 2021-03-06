@@ -7,3 +7,42 @@
     margin: 0 auto;
     display: block;
 }
+
+.header-hr{
+    width: 70%;
+}
+
+.row{
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.button{
+    text-align: center;
+    position: relative;
+    border: solid 1px black;
+    margin: 0 5px 10px 5px;
+    text-transform: uppercase;
+    color: #212529!important;
+}
+
+.page-label{
+    margin-top: 10px;
+    margin-bottom: 0;
+    font-size: large;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.custom-card{
+    border: 1px solid black;
+    margin: 7px;
+}
+
+.fa-plus{
+    text-align: center;
+    width: 100%;
+    color: black;
+    line-height: inherit;
+}

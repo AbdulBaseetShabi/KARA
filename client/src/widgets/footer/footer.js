@@ -2,11 +2,11 @@ import React from "react";
 import "./footer.css";
 
 function Footer(props) {
-  if (props.currentPath === '/home') {
-    return null;
-  }
+  let date = new Date().getUTCFullYear();
   return (
-    <div>Footer</div>
+    <div id="footer-container">
+      <label className="center-label" id="footer-label">Copyright © {date}, All rights reserved. Project created by Team KARA.</label>
+    </div>
   );
 }
 

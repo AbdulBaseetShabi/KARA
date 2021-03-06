@@ -22,6 +22,18 @@ class App extends React.Component {
       currentPath: window.location.pathname,
     }
   }
+
+  changeLocation() {
+    this.setState((state, props) => {
+      window.scrollTo(0,0);
+      return { currentPath: window.location.pathname };
+    });
+  }
+
+  componentDidMount() {
+    this.changeLocation();
+  }
+
   render() {
     return (
       <Router>
@@ -52,7 +64,7 @@ class App extends React.Component {
               <Redirect to="/home" />
           </Route>
         </Switch>
-        <Footer currentPath={this.state.currentPath}></Footer>
+        <Footer currentPath={this.state.currentPath} changeLocation={this.state.changeLocation}></Footer>
       </Router>
     );
   }

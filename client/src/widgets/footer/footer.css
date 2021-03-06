@@ -1,0 +1,9 @@
+#footer-container{
+    background-color: #1A3263;
+    color: #fffffe;
+    border: 5px solid black;
+}
+
+#footer-label{
+    margin: 5px 0;
+}

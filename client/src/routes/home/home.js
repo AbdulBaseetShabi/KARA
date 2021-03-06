@@ -1,7 +1,7 @@
 import React from "react";
 import "./home.css";
 
-function Home() {
+function Home(props) {
   return (
     <div id="home-container" className="d-flex justify-content-center align-items-center">
         <div id="login-container">
@@ -14,7 +14,7 @@ function Home() {
             <label className="center-label">Password</label>
             <input className="center-div"type="password"></input>
             <hr/>
-            <div id="login-button">Login</div>
+            <a href="/databases" onClick={props.changeLocation}><div id="login-button" className="button">Login</div></a>
         </div>
     </div>
   );
