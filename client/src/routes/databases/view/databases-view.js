@@ -28,7 +28,7 @@ class DatabasesView extends React.Component {
         <div className="row">
           {mock_data.map((db, index) => {
             return (
-              <div index={index} className="col-4 custom-card">
+              <div key={index} className="col-4 custom-card">
                 <label className="center-label db-name-label">{db.db_name}</label>
                 <hr className="header-hr" />
                 <label>Tables: {db.no_of_tables} found in the database</label>
@@ -49,7 +49,7 @@ class DatabasesView extends React.Component {
               </div>
             );
           })}
-          <div className="col-4 custom-card">
+          <div key={mock_data.length} className="col-4 custom-card">
             <a href="/databases">
               <label className="center-label" id="add-new-db-label">ADD A NEW DATABASE</label>
               <hr className="header-hr" />
