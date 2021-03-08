@@ -1,6 +1,6 @@
 #table-view-container{
     width: 100%;
-    height: calc(100% - 44px);
+    min-height: calc(100% - 44px - 50px);
     background-color: #e8e2db;
     /* color: #fffffe; */
 }

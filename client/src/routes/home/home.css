@@ -1,6 +1,6 @@
 #home-container{
     width: 100%;
-    height: calc(100% - 44px);;
+    min-height: calc(100% - 44px);
     background-color: #e8e2db;
     color: #fffffe;
 }
