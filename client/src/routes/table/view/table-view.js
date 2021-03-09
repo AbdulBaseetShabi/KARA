@@ -19,19 +19,27 @@ class TableView extends React.Component {
       is_loading: false,
       show_delete_prompt: false,
     };
-    this.table_to_delete = "";
     this.deleteTable = this.deleteTable.bind(this);
+    this.deleteDataInTable = this.deleteDataInTable.bind(this);
     this.changeDeleteModalState = this.changeDeleteModalState.bind(this);
+    this.delete_table_or_all_entries = false;
+    this.table_to_delete = "";
   }
 
-  changeDeleteModalState(state, table_to_delete) {
+  changeDeleteModalState(state, table_to_delete, delete_table_or_all_entries) {
     this.table_to_delete = table_to_delete;
+    this.delete_table_or_all_entries = delete_table_or_all_entries;
     this.setState({ show_delete_prompt: state });
   }
 
   deleteTable() {
     console.log(this.table_to_delete);
-    this.setState({is_loading: true});
+    this.setState({ is_loading: true });
+  }
+
+  deleteDataInTable() {
+    console.log("Data in " + this.table_to_delete);
+    this.setState({ is_loading: true });
   }
 
   render() {
@@ -40,8 +48,16 @@ class TableView extends React.Component {
         <DeletePopUp
           show={this.state.show_delete_prompt}
           openModal={this.changeDeleteModalState}
-          deleteData={this.deleteTable}
-          delete_name="table"
+          deleteData={
+            this.delete_table_or_all_entries
+              ? this.deleteTable
+              : this.deleteDataInTable
+          }
+          delete_name={
+            this.delete_table_or_all_entries
+              ? "table"
+              : "table's entries"
+          }
           loading={this.state.is_loading}
         />
         <label className="center-label page-label">
@@ -72,14 +88,19 @@ class TableView extends React.Component {
                 <div
                   className="button delete-button"
                   onClick={() => {
-                    this.changeDeleteModalState(true, db.table_name);
+                    this.changeDeleteModalState(true, db.table_name, true);
                   }}
                 >
-                  DELETE
+                  DELETE TABLE
                 </div>
-                <a href="/table">
-                  <div className="button delete-button">Wipe Data</div>
-                </a>
+                <div
+                  className="button delete-button"
+                  onClick={() => {
+                    this.changeDeleteModalState(true, db.table_name, false);
+                  }}
+                >
+                  Delete all entries
+                </div>
               </div>
             );
           })}
