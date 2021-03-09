@@ -2,10 +2,14 @@ import React from "react";
 import PopUp from "../../widgets/pop-ups/message-pop-up/pop-ups";
 import "./home.css";
 import HTTPCalls from "../../services/api-connect";
+import Global from "../../services/global"
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
+    if (sessionStorage.getItem(Global["APP_KEY"]) !== null) {
+      window.location.replace("/databases");
+    }
     this.state = {
       loading: false,
       response: {},
@@ -22,6 +26,10 @@ class Home extends React.Component {
     this.userData[credential] = value;
   }
 
+  // componentDidMount(){
+    
+  // }
+
   updatePopUp(response) {
     this.setState({ loading: false, response: response });
   }
@@ -32,7 +40,7 @@ class Home extends React.Component {
       console.log(res);
       if (res) {
         window.sessionStorage.setItem(
-          "user_kara_credentials",
+          Global["APP_KEY"],
           JSON.stringify(this.userData)
         );
         this.setState({ loading: false });
