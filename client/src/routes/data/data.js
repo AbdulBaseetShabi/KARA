@@ -1,5 +1,6 @@
 import React from "react";
 import "./data.css";
+import PopUp from '../../widgets/pop-ups/pop-ups';
 
 const mock_data = [
   {
@@ -55,7 +56,9 @@ class Data extends React.Component {
     this.state = {
       show_row_option: true,
       row_options: [],
+      response: {},
     };
+    this.updatePopUp = this.updatePopUp.bind(this);
     this.new_row_values = [];
     this.keys = [];
     this.data = [];
@@ -100,7 +103,12 @@ class Data extends React.Component {
       }
     });
     console.log(this.new_row_values);
+    this.updatePopUp({'type': 'error', message: 'Error Occured'})
     this.shouldShowRowOptions([], false, null);
+  }
+
+  updatePopUp(response) {
+      this.setState({response: response});
   }
 
   render() {
@@ -109,7 +117,9 @@ class Data extends React.Component {
     this.data = data["data"];
 
     return (
+    
       <div id="data-container">
+        <PopUp modaltype={this.state.response.type} show={Object.keys(this.state.response).length!==0} closePopUp={this.updatePopUp}>{this.state.response.message}</PopUp>
         <label className="center-label page-label">
           Data in the <span id="db-name-selected">Trivia</span> Table in the
           <span id="db-name-selected">Trivia</span> database
