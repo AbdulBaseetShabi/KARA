@@ -36,7 +36,7 @@ class Home extends React.Component {
           JSON.stringify(this.userData)
         );
         this.setState({ loading: false });
-        // window.location.replace("/databases");
+        window.location.replace("/databases");
       } else {
         this.updatePopUp({ type: "error", message: "Error Occured" });
       }
