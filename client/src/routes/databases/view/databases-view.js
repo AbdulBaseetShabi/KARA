@@ -108,7 +108,7 @@ class DatabasesView extends React.Component {
           openModal={this.changeDeleteModalState}
           deleteData={this.deleteDataBase}
           data = {this.db_to_delete}
-          delete_name = "Database"
+          delete_name = "database"
           loading={this.state.is_loading}
         />
         <label className="center-label page-label">
