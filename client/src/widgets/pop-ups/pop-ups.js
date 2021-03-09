@@ -6,6 +6,7 @@ function PopUp(props) {
     return (
       <div
         id="pop-up-content"
+        className={props.show?"fade-in-animation":""}
         style={{
           backgroundColor:
             props.modaltype === "error"
