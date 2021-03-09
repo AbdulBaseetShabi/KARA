@@ -1,0 +1,34 @@
+#table-edit-container{
+    width: 100%;
+    min-height: calc(100% - 44px - 50px);
+    background-color: #e8e2db;
+    padding-top: 10px;
+    /* color: #fffffe; */
+}
+
+.white-card{
+    width: 50%;
+    padding-bottom: 10px;
+    background-color: #fffffe;
+    margin: 0 auto;
+    border: 2px solid black;
+    box-shadow: 1px 1px black;
+    margin-bottom: 10px;
+}
+
+.metadata{
+    text-align: center;
+}
+
+.metadata-label{
+    width: 100%;
+}
+
+.close-open-button{
+    border: 2px solid black;
+    background-color: #e8e2db;
+    padding: 1px;
+    position: absolute;
+    right: 5px;
+    cursor: pointer;
+}
