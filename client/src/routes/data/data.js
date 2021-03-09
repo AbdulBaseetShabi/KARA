@@ -1,6 +1,7 @@
 import React from "react";
 import "./data.css";
 import PopUp from '../../widgets/pop-ups/pop-ups';
+import RowOptions from "../../widgets/row-option/row-option";
 
 const mock_data = [
   {
@@ -59,6 +60,9 @@ class Data extends React.Component {
       response: {},
     };
     this.updatePopUp = this.updatePopUp.bind(this);
+    this.shouldShowRowOptions = this.shouldShowRowOptions.bind(this);
+    this.updateRowValue = this.updateRowValue.bind(this);
+    this.saveChanges = this.saveChanges.bind(this);
     this.new_row_values = [];
     this.keys = [];
     this.data = [];
@@ -150,107 +154,7 @@ class Data extends React.Component {
             })}
           </tbody>
         </table>
-        {(() => {
-          if (this.state.show_row_option) {
-            return (
-              <div id="row-options">
-                <div id="row-options-content">
-                  <div className="row button-row">
-                    <button
-                      className="col"
-                      type="button"
-                      style={{ margin: "0 auto" }}
-                      onClick={() => {
-                        this.saveChanges();
-                      }}
-                    >
-                      Save Changes
-                    </button>
-                    <button
-                      className="col"
-                      type="button"
-                      style={{ margin: "0 auto" }}
-                    >
-                      Delete
-                    </button>
-                    <button
-                      className="col"
-                      type="button"
-                      style={{ margin: "0 auto" }}
-                      onClick={() => {
-                        this.shouldShowRowOptions([], false);
-                      }}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Column name</th>
-                        <th>Old Value</th>
-                        <th>New Value</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.state.row_options.map((row_option, index) => {
-                        return (
-                          <tr key={index}>
-                            <td>{this.keys[index]}</td>
-                            <td>{row_option}</td>
-                            <td>
-                              <input
-                                type="text"
-                                onChange={(e) => {
-                                  this.updateRowValue(
-                                    index,
-                                    row_option,
-                                    e.target.value
-                                  );
-                                }}
-                              ></input>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                  <div className="row button-row">
-                    <button
-                      className="col"
-                      type="button"
-                      style={{ margin: "0 auto" }}
-                      onClick={() => {
-                        this.saveChanges();
-                      }}
-                    >
-                      Save Changes
-                    </button>
-                    <button
-                      className="col"
-                      type="button"
-                      style={{ margin: "0 auto" }}
-                    >
-                      Delete
-                    </button>
-                    <button
-                      className="col"
-                      type="button"
-                      style={{ margin: "0 auto" }}
-                      onClick={() => {
-                        this.shouldShowRowOptions([], false);
-                      }}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          } else {
-            return null;
-          }
-        })()}
+        <RowOptions keys={this.keys} row_options={this.state.row_options} show_row_option={this.state.show_row_option} shouldShowRowOptions={this.shouldShowRowOptions} updateRowValue={this.updateRowValue} saveChanges={this.saveChanges}></RowOptions>
       </div>
     );
   }
