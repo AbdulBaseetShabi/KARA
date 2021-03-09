@@ -64,8 +64,8 @@ class DatabasesView extends React.Component {
     this.modified_db.current_name = value;
   }
 
-  deleteDataBase(name) {
-    console.log(name);
+  deleteDataBase() {
+    console.log(this.db_to_delete);
     this.setState({is_loading: true});
   }
 
@@ -107,7 +107,6 @@ class DatabasesView extends React.Component {
           show={this.state.show_delete_prompt}
           openModal={this.changeDeleteModalState}
           deleteData={this.deleteDataBase}
-          data = {this.db_to_delete}
           delete_name = "database"
           loading={this.state.is_loading}
         />

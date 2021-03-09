@@ -19,7 +19,7 @@ function DeletePopUp(props) {
                 props.loading
                   ? null
                   : () => {
-                      props.deleteData(props.data);
+                      props.deleteData();
                     }
               }
             >
