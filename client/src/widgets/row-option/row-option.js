@@ -4,8 +4,8 @@ import './row-option.css';
 function RowOptions(props) {
   if (props.show_row_option) {
     return (
-      <div id="row-options">
-        <div id="row-options-content">
+      <div className="modal-options">
+        <div className="modal-options-content">
           <div className="row button-row">
             <button
               className="col"
