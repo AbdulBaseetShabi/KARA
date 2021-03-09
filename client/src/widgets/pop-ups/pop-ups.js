@@ -6,7 +6,7 @@ function PopUp(props) {
     return (
       <div
         id="pop-up-content"
-        className={props.show?"fade-in-animation":""}
+        className={props.show ? "fade-in-animation" : ""}
         style={{
           backgroundColor:
             props.modaltype === "error"
@@ -16,8 +16,25 @@ function PopUp(props) {
               : "#99cc33",
         }}
       >
-        <div id="popup-message">{props.children}</div>
-        <label  id="close-icon" onClick={()=>{props.closePopUp({});}}>Close  <i className="fas fa-times"></i></label>
+        <div
+          id="popup-message"
+          style={{
+            color:
+              props.modaltype === "error"
+                ? "#fffffe"
+                : "black"
+          }}
+        >
+          {props.children}
+        </div>
+        <label
+          id="close-icon"
+          onClick={() => {
+            props.closePopUp({});
+          }}
+        >
+          Close <i className="fas fa-times"></i>
+        </label>
       </div>
     );
   }
