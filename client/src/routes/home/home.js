@@ -12,7 +12,7 @@ class Home extends React.Component {
     };
     this.updatePopUp = this.updatePopUp.bind(this);
     this.userData = {
-      connection_string: "",
+      server: "",
       user_id: "",
       password: "",
     };
@@ -54,14 +54,14 @@ class Home extends React.Component {
             Authentication Page
           </label>
           <hr />
-          <label className="center-label">Connection String</label>
+          <label className="center-label">Server</label>
           <input
             className="center-div"
             type="text"
-            id="connection-string"
-            placeholder="Connection String..."
+            id="server"
+            placeholder="Server..."
             onChange={(e) => {
-              this.modifyLoginCredentials("connection_string", e.target.value);
+              this.modifyLoginCredentials("server", e.target.value);
             }}
           ></input>
           <label className="center-label">User ID/Name</label>
