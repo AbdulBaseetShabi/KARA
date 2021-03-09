@@ -1,4 +1,16 @@
 #nav-container{
     border: 5px solid black;
     text-align: center;
+    color: #fffffe!important;
+}
+
+.nav-link{
+    color: #fffffe!important;
+}
+
+#back-arrow{
+    position: absolute;
+    left: 10px;
+    top: 4px;
+    cursor: pointer;
 }
