@@ -2,6 +2,7 @@ import React from "react";
 import "./data.css";
 import PopUp from "../../widgets/pop-ups/message-pop-up/pop-ups";
 import RowOptions from "../../widgets/pop-ups//row-option/row-option";
+import DeletePopUp from "../../widgets/pop-ups/delete-pop-up/delete-pop-up";
 
 const mock_data = [
   {
@@ -58,7 +59,11 @@ class Data extends React.Component {
       show_row_option: false,
       row_options: [],
       response: {},
+      is_loading: false,
+      show_delete_prompt: false,
     };
+    this.deleteRow = this.deleteRow.bind(this);
+    this.changeDeleteModalState = this.changeDeleteModalState.bind(this);
     this.updatePopUp = this.updatePopUp.bind(this);
     this.shouldShowRowOptions = this.shouldShowRowOptions.bind(this);
     this.updateRowValue = this.updateRowValue.bind(this);
@@ -67,6 +72,7 @@ class Data extends React.Component {
     this.keys = [];
     this.data = [];
     this.edit_row_number = null;
+    this.row_to_delete = null;
   }
 
   shouldShowRowOptions(row, boolean, edit_row_number) {
@@ -81,14 +87,25 @@ class Data extends React.Component {
         });
       }
     }
-
     this.edit_row_number = edit_row_number;
+    if (edit_row_number !== undefined || edit_row_number !== null) {
+      this.row_to_delete = this.data[this.edit_row_number];
+    }
     this.setState({ row_options: row, show_row_option: boolean });
   }
 
   updateRowValue(index, oldValue, newValue) {
     this.new_row_values[index]["old_value"] = oldValue;
     this.new_row_values[index]["new_value"] = newValue;
+  }
+
+  deleteRow() {
+    this.setState({ is_loading: true });
+  }
+
+  changeDeleteModalState(state) {
+    console.log(this.row_to_delete);
+    this.setState({ show_delete_prompt: state });
   }
 
   saveChanges() {
@@ -122,6 +139,22 @@ class Data extends React.Component {
 
     return (
       <div id="data-container">
+        <RowOptions
+          keys={this.keys}
+          row_options={this.state.row_options}
+          show_row_option={this.state.show_row_option}
+          shouldShowRowOptions={this.shouldShowRowOptions}
+          updateRowValue={this.updateRowValue}
+          saveChanges={this.saveChanges}
+          openDeleteModal={this.changeDeleteModalState}
+        ></RowOptions>
+        <DeletePopUp
+          show={this.state.show_delete_prompt}
+          openModal={this.changeDeleteModalState}
+          deleteData={this.deleteRow}
+          delete_name="row"
+          loading={this.state.is_loading}
+        />
         <PopUp
           modaltype={this.state.response.type}
           show={Object.keys(this.state.response).length !== 0}
@@ -159,14 +192,6 @@ class Data extends React.Component {
             })}
           </tbody>
         </table>
-        <RowOptions
-          keys={this.keys}
-          row_options={this.state.row_options}
-          show_row_option={this.state.show_row_option}
-          shouldShowRowOptions={this.shouldShowRowOptions}
-          updateRowValue={this.updateRowValue}
-          saveChanges={this.saveChanges}
-        ></RowOptions>
       </div>
     );
   }

@@ -1,5 +1,5 @@
 import React from "react";
-import './row-option.css';
+import "./row-option.css";
 
 function RowOptions(props) {
   if (props.show_row_option) {
@@ -17,7 +17,14 @@ function RowOptions(props) {
             >
               Save Changes
             </button>
-            <button className="col" type="button" style={{ margin: "0 auto" }}>
+            <button
+              className="col"
+              type="button"
+              style={{ margin: "0 auto" }}
+              onClick={() => {
+                props.openDeleteModal(true);
+              }}
+            >
               Delete
             </button>
             <button
@@ -73,7 +80,14 @@ function RowOptions(props) {
             >
               Save Changes
             </button>
-            <button className="col" type="button" style={{ margin: "0 auto" }}>
+            <button
+              className="col"
+              type="button"
+              style={{ margin: "0 auto" }}
+              onClick={() => {
+                props.openDeleteModal(true);
+              }}
+            >
               Delete
             </button>
             <button
