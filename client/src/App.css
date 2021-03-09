@@ -6,6 +6,7 @@
 .center-div{
     margin: 0 auto;
     display: block;
+    margin-bottom: 4px;
 }
 
 .header-hr{
@@ -67,4 +68,9 @@
     width: 100%;
     color: black;
     line-height: inherit;
+}
+
+input{
+    width: 80%;
+    text-align: center;
 }
