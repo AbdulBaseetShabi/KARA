@@ -1,7 +1,7 @@
 import React from "react";
 import "./data.css";
-import PopUp from "../../widgets/pop-ups/pop-ups";
-import RowOptions from "../../widgets/row-option/row-option";
+import PopUp from "../../widgets/pop-ups/message-pop-up/pop-ups";
+import RowOptions from "../../widgets/pop-ups//row-option/row-option";
 
 const mock_data = [
   {

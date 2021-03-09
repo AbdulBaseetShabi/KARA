@@ -1,5 +1,5 @@
 import React from "react";
-import PopUp from "../../widgets/pop-ups/pop-ups";
+import PopUp from "../../widgets/pop-ups/message-pop-up/pop-ups";
 import "./home.css";
 import HTTPCalls from "../../services/api-connect";
 
