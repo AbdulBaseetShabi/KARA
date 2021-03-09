@@ -50,7 +50,7 @@ class DatabasesView extends React.Component {
             <a href="/databases">
               <label className="center-label" id="add-new-db-label">ADD A NEW DATABASE</label>
               <hr className="header-hr" />
-              <i className="fas fa-plus fa-7x"></i>
+              <i className="fas fa-plus fa-7x big-plus"></i>
             </a>
           </div>
         </div>

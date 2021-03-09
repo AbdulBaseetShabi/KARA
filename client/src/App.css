@@ -61,3 +61,10 @@
     text-decoration: none;
     color: #FFFFFE!important;
 }
+
+.big-plus{
+    text-align: center;
+    width: 100%;
+    color: black;
+    line-height: inherit;
+}

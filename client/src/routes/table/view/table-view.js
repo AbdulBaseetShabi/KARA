@@ -48,7 +48,7 @@ function TableView() {
             <a href="/databases">
               <label className="center-label" id="add-new-db-label">ADD A NEW TABLE</label>
               <hr className="header-hr" />
-              <i className="fas fa-plus fa-7x" id="big-plus"></i>
+              <i className="fas fa-plus fa-7x big-plus"></i>
             </a>
           </div>
         </div>
