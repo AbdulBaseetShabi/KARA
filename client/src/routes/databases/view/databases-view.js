@@ -66,7 +66,7 @@ class DatabasesView extends React.Component {
 
   deleteDataBase() {
     console.log(this.db_to_delete);
-    this.setState({is_loading: true});
+    this.setState({ is_loading: true });
   }
 
   changeDataBaseName() {
@@ -96,6 +96,24 @@ class DatabasesView extends React.Component {
   render() {
     return (
       <div id="db-view-container">
+        <AddDB
+          show={this.state.show_add_modal}
+          openModal={this.changeMessageModalState}
+          loading={this.state.creating_new_db || this.state.updating_db_name}
+          controlCreateNewDatabase={this.controlCreateNewDataBase}
+          controlChangeDataBaseName={this.controlChangeDataBaseName}
+          createNewDatabase={this.createNewDatabase}
+          changeDataBaseName={this.changeDataBaseName}
+          is_add_new_db={this.state.is_add_new_db}
+          old_name={this.modified_db.previous_name}
+        />
+        <DeletePopUp
+          show={this.state.show_delete_prompt}
+          openModal={this.changeDeleteModalState}
+          deleteData={this.deleteDataBase}
+          delete_name="database"
+          loading={this.state.is_loading}
+        />
         <PopUp
           modaltype={this.state.response.type}
           show={Object.keys(this.state.response).length !== 0}
@@ -103,13 +121,7 @@ class DatabasesView extends React.Component {
         >
           {this.state.response.message}
         </PopUp>
-        <DeletePopUp
-          show={this.state.show_delete_prompt}
-          openModal={this.changeDeleteModalState}
-          deleteData={this.deleteDataBase}
-          delete_name = "database"
-          loading={this.state.is_loading}
-        />
+
         <label className="center-label page-label">
           Databases in Current Server
         </label>
@@ -161,17 +173,6 @@ class DatabasesView extends React.Component {
             ></i>
           </div>
         </div>
-        <AddDB
-          show={this.state.show_add_modal}
-          openModal={this.changeMessageModalState}
-          loading={this.state.creating_new_db || this.state.updating_db_name}
-          controlCreateNewDatabase={this.controlCreateNewDataBase}
-          controlChangeDataBaseName={this.controlChangeDataBaseName}
-          createNewDatabase={this.createNewDatabase}
-          changeDataBaseName={this.changeDataBaseName}
-          is_add_new_db={this.state.is_add_new_db}
-          old_name={this.modified_db.previous_name}
-        />
       </div>
     );
   }

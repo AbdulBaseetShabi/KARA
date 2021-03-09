@@ -49,6 +49,13 @@ class Home extends React.Component {
         id="home-container"
         className="d-flex justify-content-center align-items-center"
       >
+        <PopUp
+          modaltype={this.state.response.type}
+          show={Object.keys(this.state.response).length !== 0}
+          closePopUp={this.updatePopUp}
+        >
+          {this.state.response.message}
+        </PopUp>
         <div id="login-container">
           <label className="center-label" id="auth-label">
             Authentication Page
@@ -115,13 +122,6 @@ class Home extends React.Component {
             )}
           </div>
         </div>
-        <PopUp
-          modaltype={this.state.response.type}
-          show={Object.keys(this.state.response).length !== 0}
-          closePopUp={this.updatePopUp}
-        >
-          {this.state.response.message}
-        </PopUp>
       </div>
     );
   }
