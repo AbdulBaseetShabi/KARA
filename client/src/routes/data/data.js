@@ -54,7 +54,7 @@ class Data extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show_row_option: true,
+      show_row_option: false,
       row_options: [],
       response: {},
     };
