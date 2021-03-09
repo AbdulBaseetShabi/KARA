@@ -1,0 +1,27 @@
+#pop-up-content{
+    min-height: 50px;
+    width: 300px;
+    position: absolute;
+    right: 0;
+    margin-right: 5px;
+    margin-top: 2px;
+}
+
+#popup-message{
+    padding: 0 2px;
+}
+
+#close-icon{
+    /* padding: 0 5px; */
+    background-color: black;
+    color: #fffffe;
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+#close-icon:hover{
+    cursor: pointer;
+}
