@@ -38,13 +38,10 @@ class DatabasesView extends React.Component {
                 <label>Date Created: {db.date_created}</label>
                 <br />
                 <a href="/table">
-                  <div id="view-more-button" className="button">View more info</div>
+                  <div className="button view-more-button">View more info</div>
                 </a>
                 <a href="/databases">
-                  <div id="edit-button" className="button">Edit</div>
-                </a>
-                <a href="/databases">
-                  <div id="delete-button" className="button">DELETE</div>
+                  <div className="button delete-button">DELETE</div>
                 </a>
               </div>
             );

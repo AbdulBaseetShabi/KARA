@@ -1,6 +1,6 @@
 import React from "react";
 import "./data.css";
-import PopUp from '../../widgets/pop-ups/pop-ups';
+import PopUp from "../../widgets/pop-ups/pop-ups";
 import RowOptions from "../../widgets/row-option/row-option";
 
 const mock_data = [
@@ -107,12 +107,12 @@ class Data extends React.Component {
       }
     });
     console.log(this.new_row_values);
-    this.updatePopUp({'type': 'error', message: 'Error Occured'})
+    this.updatePopUp({ type: "error", message: "Error Occured" });
     this.shouldShowRowOptions([], false, null);
   }
 
   updatePopUp(response) {
-      this.setState({response: response});
+    this.setState({ response: response });
   }
 
   render() {
@@ -121,11 +121,16 @@ class Data extends React.Component {
     this.data = data["data"];
 
     return (
-    
       <div id="data-container">
-        <PopUp modaltype={this.state.response.type} show={Object.keys(this.state.response).length!==0} closePopUp={this.updatePopUp}>{this.state.response.message}</PopUp>
+        <PopUp
+          modaltype={this.state.response.type}
+          show={Object.keys(this.state.response).length !== 0}
+          closePopUp={this.updatePopUp}
+        >
+          {this.state.response.message}
+        </PopUp>
         <label className="center-label page-label">
-          Data in the <span id="db-name-selected">Trivia</span> Table in the
+          Data in the <span id="db-name-selected">Trivia</span> Table in the{" "}
           <span id="db-name-selected">Trivia</span> database
         </label>
         <hr className="header-hr" />
@@ -154,7 +159,14 @@ class Data extends React.Component {
             })}
           </tbody>
         </table>
-        <RowOptions keys={this.keys} row_options={this.state.row_options} show_row_option={this.state.show_row_option} shouldShowRowOptions={this.shouldShowRowOptions} updateRowValue={this.updateRowValue} saveChanges={this.saveChanges}></RowOptions>
+        <RowOptions
+          keys={this.keys}
+          row_options={this.state.row_options}
+          show_row_option={this.state.show_row_option}
+          shouldShowRowOptions={this.shouldShowRowOptions}
+          updateRowValue={this.updateRowValue}
+          saveChanges={this.saveChanges}
+        ></RowOptions>
       </div>
     );
   }

@@ -25,6 +25,7 @@
     margin: 0 5px 10px 5px;
     text-transform: uppercase;
     color: #212529!important;
+    cursor: pointer;
 }
 
 .page-label{
@@ -33,6 +34,7 @@
     font-size: large;
     font-weight: bold;
     text-transform: uppercase;
+    position: relative;
 }
 
 .custom-card{
@@ -40,9 +42,22 @@
     margin: 7px;
 }
 
-.fa-plus{
-    text-align: center;
-    width: 100%;
-    color: black;
-    line-height: inherit;
+.delete-button:hover{
+    background-color: #941305;
+    background-color: #030303;
+    color: #FFFFFE!important;
+    text-decoration: none;
+}
+
+.edit-button:hover{
+    background-color: #727fc2;
+    background-color: #030303;
+    color: #FFFFFE!important;
+    text-decoration: none;
+}
+
+.view-more-button:hover{
+    background-color: #030303;
+    text-decoration: none;
+    color: #FFFFFE!important;
 }

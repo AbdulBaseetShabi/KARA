@@ -30,13 +30,16 @@ function TableView() {
                 <label>Date Created: {db.date_created}</label>
                 <br />
                 <a href="/data">
-                  <div id="view-more-button" className="button">View Data</div>
+                  <div className="button view-more-button">View Data</div>
+                </a>
+                <a href="/table/edit">
+                  <div className="button edit-button">Edit</div>
                 </a>
                 <a href="/table">
-                  <div id="edit-button" className="button">Edit</div>
+                  <div className="button delete-button">DELETE</div>
                 </a>
                 <a href="/table">
-                  <div id="delete-button" className="button">DELETE</div>
+                  <div className="button delete-button">Wipe Data</div>
                 </a>
               </div>
             );
@@ -45,7 +48,7 @@ function TableView() {
             <a href="/databases">
               <label className="center-label" id="add-new-db-label">ADD A NEW TABLE</label>
               <hr className="header-hr" />
-              <i className="fas fa-plus fa-7x"></i>
+              <i className="fas fa-plus fa-7x" id="big-plus"></i>
             </a>
           </div>
         </div>

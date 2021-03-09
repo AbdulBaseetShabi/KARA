@@ -5,6 +5,7 @@
     right: 0;
     margin-right: 5px;
     margin-top: 2px;
+    border: 2px solid black;
 }
 
 #popup-message{
@@ -20,8 +21,5 @@
     margin-bottom: 0;
     width: 100%;
     text-align: center;
-}
-
-#close-icon:hover{
     cursor: pointer;
 }

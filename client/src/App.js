@@ -9,7 +9,6 @@ import "./App.css";
 
 import NavigationBar from "./widgets/navigation-bar/navigation-bar";
 import DatabasesView from "./routes/databases/view/databases-view";
-import DatabasesEdit from "./routes/databases/edit/databases-edit";
 import TableView from "./routes/table/view/table-view";
 import TableEdit from "./routes/table/edit/table-edit";
 import Home from "./routes/home/home";
@@ -51,9 +50,6 @@ class App extends React.Component {
           </Route>
           <Route exact path="/databases/view">
             <DatabasesView />
-          </Route>
-          <Route exact path="/databases/edit">
-            <DatabasesEdit />
           </Route>
           <Route path="/home">
             <Home />
