@@ -1,7 +1,8 @@
 import React from "react";
 import AddDB from "../db-edit-add-popup";
-import PopUp from "../../../widgets/pop-ups/pop-ups";
+import PopUp from "../../../widgets/pop-ups/message-pop-up/pop-ups";
 import "./databases-view.css";
+import DeletePopUp from "../../../widgets/pop-ups/delete-pop-up/delete-pop-up";
 
 const mock_data = [
   {
@@ -22,13 +23,17 @@ class DatabasesView extends React.Component {
       updating_db_name: false,
       is_add_new_db: false,
       response: {},
+      show_delete_prompt: false,
     };
+    this.db_to_delete = "";
     this.new_db_name = "";
     this.modified_db = {
       previous_name: "",
       current_name: "",
     };
-    this.changeModalState = this.changeModalState.bind(this);
+    this.changeDeleteModalState = this.changeDeleteModalState.bind(this);
+    this.deleteDataBase = this.deleteDataBase.bind(this);
+    this.changeMessageModalState = this.changeMessageModalState.bind(this);
     this.createNewDatabase = this.createNewDatabase.bind(this);
     this.changeDataBaseName = this.changeDataBaseName.bind(this);
     this.updatePopUp = this.updatePopUp.bind(this);
@@ -36,7 +41,7 @@ class DatabasesView extends React.Component {
     this.controlChangeDataBaseName = this.controlChangeDataBaseName.bind(this);
   }
 
-  changeModalState(state, add_new_or_edit_old, old_name) {
+  changeMessageModalState(state, add_new_or_edit_old, old_name) {
     if (!add_new_or_edit_old) {
       this.modified_db.previous_name = old_name;
     }
@@ -46,12 +51,22 @@ class DatabasesView extends React.Component {
     });
   }
 
+  changeDeleteModalState(state, db_to_delete) {
+    this.db_to_delete = db_to_delete;
+    this.setState({ show_delete_prompt: state });
+  }
+
   controlCreateNewDataBase(value) {
     this.new_db_name = value;
   }
 
   controlChangeDataBaseName(value) {
     this.modified_db.current_name = value;
+  }
+
+  deleteDataBase(name) {
+    console.log(name);
+    this.setState({is_loading: true});
   }
 
   changeDataBaseName() {
@@ -77,6 +92,7 @@ class DatabasesView extends React.Component {
   updatePopUp(response) {
     this.setState({ response: response });
   }
+
   render() {
     return (
       <div id="db-view-container">
@@ -87,6 +103,14 @@ class DatabasesView extends React.Component {
         >
           {this.state.response.message}
         </PopUp>
+        <DeletePopUp
+          show={this.state.show_delete_prompt}
+          openModal={this.changeDeleteModalState}
+          deleteData={this.deleteDataBase}
+          data = {this.db_to_delete}
+          delete_name = "Database"
+          loading={this.state.is_loading}
+        />
         <label className="center-label page-label">
           Databases in Current Server
         </label>
@@ -110,13 +134,18 @@ class DatabasesView extends React.Component {
                 </a>
                 <div
                   className="button delete-button"
-                  onClick={() => this.changeModalState(true, false, db.db_name)}
+                  onClick={() =>
+                    this.changeMessageModalState(true, false, db.db_name)
+                  }
                 >
                   Change Name
                 </div>
-                <a href="/databases">
-                  <div className="button delete-button">DELETE</div>
-                </a>
+                <div
+                  className="button delete-button"
+                  onClick={() => this.changeDeleteModalState(true, db.db_name)}
+                >
+                  DELETE
+                </div>
               </div>
             );
           })}
@@ -128,14 +157,14 @@ class DatabasesView extends React.Component {
             <i
               className="fas fa-plus fa-7x big-plus"
               onClick={() => {
-                this.changeModalState(true, true, "");
+                this.changeMessageModalState(true, true, "");
               }}
             ></i>
           </div>
         </div>
         <AddDB
           show={this.state.show_add_modal}
-          openModal={this.changeModalState}
+          openModal={this.changeMessageModalState}
           loading={this.state.creating_new_db || this.state.updating_db_name}
           controlCreateNewDatabase={this.controlCreateNewDataBase}
           controlChangeDataBaseName={this.controlChangeDataBaseName}
