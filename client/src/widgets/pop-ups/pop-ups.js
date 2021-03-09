@@ -16,7 +16,7 @@ function PopUp(props) {
         }}
       >
         <div id="popup-message">{props.children}</div>
-        <label  id="close-icon" onClick={()=>{props.closePopUp({});}}>Close  <i class="fas fa-times"></i></label>
+        <label  id="close-icon" onClick={()=>{props.closePopUp({});}}>Close  <i className="fas fa-times"></i></label>
       </div>
     );
   }
