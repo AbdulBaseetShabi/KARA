@@ -14,6 +14,7 @@ import TableView from "./routes/table/view/table-view";
 import TableEdit from "./routes/table/edit/table-edit";
 import Home from "./routes/home/home";
 import Footer from "./widgets/footer/footer";
+import Data from "./routes/data/data";
 
 class App extends React.Component {
   constructor(props) {
@@ -39,6 +40,9 @@ class App extends React.Component {
       <Router>
         <NavigationBar currentPath={this.state.currentPath}></NavigationBar>
         <Switch>
+          <Route path="/data">
+            <Data/>
+          </Route>
           <Route exact path="/table/view">
             <TableView />
           </Route>

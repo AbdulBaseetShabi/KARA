@@ -29,7 +29,7 @@ function TableView() {
                 <label>Size: {db.size}</label> <br/>
                 <label>Date Created: {db.date_created}</label>
                 <br />
-                <a href="/table">
+                <a href="/data">
                   <div id="view-more-button" className="button">View Data</div>
                 </a>
                 <a href="/table">
