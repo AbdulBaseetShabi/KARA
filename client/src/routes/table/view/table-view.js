@@ -80,7 +80,7 @@ class TableView extends React.Component {
                 <label>Date Created: {db.date_created}</label>
                 <br />
                 <a href="/data">
-                  <div className="button view-more-button">View Data</div>
+                  <div className="button view-more-button">View Entries</div>
                 </a>
                 <a href="/table/edit">
                   <div className="button edit-button">Edit</div>
