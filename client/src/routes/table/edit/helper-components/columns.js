@@ -36,9 +36,7 @@ class Columns extends React.Component {
                         <hr className="header-hr" />
                         <label>Data Type: {data.data_type}</label>
                         <br />
-                        <label>Default Value: {data.default_value}</label>
-                        <br />
-                        <label>Constraint: {data.constraints}</label>
+                        <label>Allows Null: {data.allows_null.toString().toUpperCase()}</label>
                       </div>
                     ) : null}
                     <hr />
