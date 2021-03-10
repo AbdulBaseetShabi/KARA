@@ -1,38 +1,49 @@
 import React from "react";
 import Columns from "./helper-components/columns";
 import MetaData from "./helper-components/meta-data";
+import TableConstraint from "./helper-components/table-constraint";
 import "./table-edit.css";
 
 const mock_data = [
   {
     column_name: "Name",
     data_type: "VARCHAR",
-    default_value: "",
-    constraints: "Value != null",
+    allows_null: false,
   },
   {
     column_name: "Age",
     data_type: "Integer",
-    default_value: "n/a",
-    constraints: "Value > 10",
+    allows_null: false,
   },
   {
     column_name: "DOB",
     data_type: "Date",
-    default_value: "Today Date",
-    constraints: "n/a",
+    allows_null: false,
   },
   {
     column_name: "Married",
     data_type: "Boolean",
-    default_value: "false",
-    constraints: "n/a",
+    allows_null: false,
   },
   {
     column_name: "Spouse",
     data_type: "VARCHAR",
-    default_value: "NULL",
-    constraints: "n/a",
+    allows_null: true,
+  },
+];
+
+const mock_data_2 = [
+  {
+    column_name: "Married",
+    constraint_type: "FOREIGN KEY",
+    relation_column: "Studio",
+    relation_table: "Dance",
+  },
+  {
+    column_name: "ID",
+    constraint_type: "PRIMARY KEY",
+    relation_column: "",
+    relation_table: "",
   },
 ];
 
@@ -42,11 +53,13 @@ class TableEdit extends React.Component {
     this.state = {
       open_meta_data_view: false,
       open_columns_view: false,
+      open_constraints_view: false,
       show_columns: [],
     };
     this.showMetaDataView = this.showMetaDataView.bind(this);
     this.showColumnView = this.showColumnView.bind(this);
     this.openColumnInfo = this.openColumnInfo.bind(this);
+    this.showConstraintsView = this.showConstraintsView.bind(this);
     this.table_meta_data = {
       no_of_columns: 5,
       no_of_entries: 500,
@@ -62,6 +75,12 @@ class TableEdit extends React.Component {
   showColumnView() {
     this.setState((prevState, prevProps) => {
       return { open_columns_view: !prevState.open_columns_view };
+    });
+  }
+
+  showConstraintsView() {
+    this.setState((prevState, prevProps) => {
+      return { open_constraints_view: !prevState.open_constraints_view };
     });
   }
 
@@ -100,10 +119,11 @@ class TableEdit extends React.Component {
           showColumnView={this.showColumnView}
           openColumnInfo={this.openColumnInfo}
         />
-        <label>Relatioional Relationship</label>
-        <br />
-        <label>Table Columns</label> <label>Relationship</label>{" "}
-        <label>Table: Column</label> <label>Delete Relationship</label>
+        <TableConstraint
+          data={mock_data_2}
+          open_constraints_view={this.state.open_constraints_view}
+          showConstraintsView={this.showConstraintsView}
+        />
       </div>
     );
   }
