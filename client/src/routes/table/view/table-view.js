@@ -1,5 +1,6 @@
 import React from "react";
 import DeletePopUp from "../../../widgets/pop-ups/delete-pop-up/delete-pop-up";
+import AddNewTable from "./add-new-table";
 import "./table-view.css";
 
 const mock_data = [
@@ -17,11 +18,15 @@ class TableView extends React.Component {
     super(props);
     this.state = {
       is_loading: false,
+      is_loading_add_new_table: false,
       show_delete_prompt: false,
+      show_add_new_table: false,
     };
     this.deleteTable = this.deleteTable.bind(this);
     this.deleteDataInTable = this.deleteDataInTable.bind(this);
     this.changeDeleteModalState = this.changeDeleteModalState.bind(this);
+    this.changeAddTableModalState = this.changeAddTableModalState.bind(this);
+    this.addTable = this.addTable.bind(this);
     this.delete_table_or_all_entries = false;
     this.table_to_delete = "";
   }
@@ -32,9 +37,18 @@ class TableView extends React.Component {
     this.setState({ show_delete_prompt: state });
   }
 
+  changeAddTableModalState(state) {
+    this.setState({ show_add_new_table: state });
+  }
+
   deleteTable() {
     console.log(this.table_to_delete);
     this.setState({ is_loading: true });
+  }
+
+  addTable(table_data) {
+    console.log(table_data);
+    this.setState({ is_loading_add_new_table: true });
   }
 
   deleteDataInTable() {
@@ -45,6 +59,12 @@ class TableView extends React.Component {
   render() {
     return (
       <div id="table-view-container">
+        <AddNewTable
+          show={this.state.show_add_new_table}
+          openModal={this.changeAddTableModalState}
+          loading={this.state.is_loading_add_new_table}
+          addTable={this.addTable}
+        />
         <DeletePopUp
           show={this.state.show_delete_prompt}
           openModal={this.changeDeleteModalState}
@@ -54,9 +74,7 @@ class TableView extends React.Component {
               : this.deleteDataInTable
           }
           delete_name={
-            this.delete_table_or_all_entries
-              ? "table"
-              : "table's entries"
+            this.delete_table_or_all_entries ? "table" : "table's entries"
           }
           loading={this.state.is_loading}
         />
@@ -105,13 +123,11 @@ class TableView extends React.Component {
             );
           })}
           <div key={mock_data.length} className="col-4 custom-card">
-            <a href="/databases">
-              <label className="center-label" id="add-new-db-label">
-                ADD A NEW TABLE
-              </label>
-              <hr className="header-hr" />
-              <i className="fas fa-plus fa-7x big-plus"></i>
-            </a>
+            <label className="center-label" id="add-new-db-label">
+              ADD A NEW TABLE
+            </label>
+            <hr className="header-hr" />
+            <i className="fas fa-plus fa-7x big-plus" onClick={()=>this.changeAddTableModalState(true)}></i>
           </div>
         </div>
       </div>
