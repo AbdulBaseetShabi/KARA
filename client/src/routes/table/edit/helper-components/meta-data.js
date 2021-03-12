@@ -20,11 +20,19 @@ class MetaData extends React.Component {
             <hr className="header-hr" />
             <div className="metadata">
               <label className="metadata-label">Database Name</label>
-              <input type="text"></input>
+              <input
+                type="text"
+                disabled="disabled"
+                value={this.props.table_meta_data.db_name}
+              ></input>
             </div>
             <div className="metadata">
               <label className="metadata-label">Table Name</label>
-              <input type="text"></input>
+              <input
+                type="text"
+                disabled="disabled"
+                value={this.props.table_meta_data.table_name}
+              ></input>
             </div>
             <div className="metadata">
               <label className="metadata-label">Number of Entries</label>

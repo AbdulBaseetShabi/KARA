@@ -63,6 +63,8 @@ class TableEdit extends React.Component {
     this.table_meta_data = {
       no_of_columns: 5,
       no_of_entries: 500,
+      table_name: 'Testing', 
+      db_name: 'Track',
     };
   }
 
