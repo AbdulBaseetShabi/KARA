@@ -1,0 +1,18 @@
+.delete-column-button{
+    margin-top: 4px;
+}
+
+.column-to-edit{
+    border: 2px solid black;
+    margin: 4px auto;
+    padding: 2px 4px;
+}
+
+.constraint-label{
+    position: relative;
+}
+
+.constraint-delete-button{
+    position: absolute;
+    right: 0;
+}

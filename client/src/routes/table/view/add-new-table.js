@@ -1,9 +1,11 @@
 import React from "react";
+import Column from "../../../widgets/column/column";
 
+const data_type = ["int", "boolean", "varchar"];
 const column_representation = {
   column_name: "",
   allows_null: false,
-  data_type: "",
+  data_type: data_type[0].toUpperCase(),
   constraints: {
     primary_key: {
       is_primary_key: false,
@@ -22,8 +24,6 @@ const column_representation = {
   },
 };
 
-const data_type = ["int", "boolean", "varchar"];
-
 class AddNewTable extends React.Component {
   constructor(props) {
     super(props);
@@ -36,6 +36,9 @@ class AddNewTable extends React.Component {
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.addNewColumn = this.addNewColumn.bind(this);
+    this.removeConstraint = this.removeConstraint.bind(this);
+    this.addConstraint = this.addConstraint.bind(this);
+    this.deleteColumn = this.deleteColumn.bind(this);
   }
 
   addNewColumn() {
@@ -175,161 +178,16 @@ class AddNewTable extends React.Component {
             <div>
               {this.state.data.table_data.columns.map((column, index) => {
                 return (
-                  <div key={index} className="column-to-edit">
-                    <div className="row">
-                      <div className="col">
-                        <label className="center-label">Column Name: </label>
-                        <input
-                          name="column_name"
-                          type="text"
-                          data-key={index}
-                          checked={column.column_name}
-                          value={column.column_name}
-                          onChange={this.handleInputChange}
-                        ></input>
-                      </div>
-                      <div className="col">
-                        <label className="center-label">Allows Null</label>
-                        <input
-                          name="allows_null"
-                          type="checkbox"
-                          data-key={index}
-                          value={column.allows_null}
-                          onChange={this.handleInputChange}
-                        ></input>
-                      </div>
-                      <div className="col">
-                        <label className="center-label">Data Type</label>
-                        <select
-                          name="data_type"
-                          data-key={index}
-                          className="center-block"
-                          onChange={this.handleInputChange}
-                        >
-                          {data_type.map((type, i) => {
-                            let updated_type = type.toUpperCase();
-                            return (
-                              <option key={i} value={updated_type}>
-                                {updated_type}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="center-label">Key Constraints</label>
-                      <hr
-                        className="header-hr"
-                        style={{
-                          margin: "0 auto",
-                          border: "1.5px solid",
-                          borderBottom: "none",
-                        }}
-                      />
-                      {column.constraints.unique_key.is_unique_key ? (
-                        <label className="center-label constraint-label">
-                          Column is a unique key
-                          <button
-                            name="unique"
-                            className="constraint-delete-button"
-                            onClick={(e) => this.removeConstraint(e, index)}
-                          >
-                            Delete
-                          </button>
-                        </label>
-                      ) : null}
-                      {column.constraints.primary_key.is_primary_key ? (
-                        <label className="center-label constraint-label">
-                          Column is a primary key
-                          <button
-                            name="primary"
-                            className="constraint-delete-button"
-                            onClick={(e) => this.removeConstraint(e, index)}
-                          >
-                            Delete
-                          </button>
-                        </label>
-                      ) : null}
-                      <br />
-                      {column.constraints.foreign_key.is_foreign_key ? (
-                        <label className="center-label constraint-label">
-                          Column is a Foreign key -{">"} [
-                          {column.constraints.foreign_key.reference_table_name}
-                          ].
-                          {column.constraints.foreign_key.reference_column_name}
-                          <button
-                            name="foreign"
-                            className="constraint-delete-button"
-                            onClick={(e) => this.removeConstraint(e, index)}
-                          >
-                            Delete
-                          </button>
-                        </label>
-                      ) : null}
-
-                      {column.constraints.primary_key.is_primary_key &&
-                      column.constraints.foreign_key.is_foreign_key ? null : (
-                        <div className="d-flex justify-content-center">
-                          <select
-                            name="keys"
-                            data-key={index}
-                            onChange={this.handleInputChange}
-                          >
-                            <option value="null"></option>
-                            {column.constraints.primary_key.is_primary_key ||
-                            column.constraints.unique_key
-                              .is_unique_key ? null : (
-                              <option value="unique">Unique Key</option>
-                            )}
-                            {column.constraints.primary_key
-                              .is_primary_key ? null : (
-                              <option value="primary">Primary Key</option>
-                            )}
-                            {column.constraints.foreign_key
-                              .is_foreign_key ? null : (
-                              <option value="foreign">Foreign Key</option>
-                            )}
-                          </select>
-                          <button onClick={(e) => this.addConstraint(index)}>
-                            Add Constraint
-                          </button>
-                          <br />
-                        </div>
-                      )}
-
-                      {column.constraints.foreign_key.is_foreign_key_selected &&
-                      (column.constraints.foreign_key.reference_table_name
-                        .length === 0 ||
-                        column.constraints.foreign_key.reference_column_name
-                          .length === 0) ? (
-                        <div
-                          className="d-flex justify-content-center"
-                          style={{ marginTop: "4px", padding: "2px" }}
-                        >
-                          <label>References -{">"} </label>
-                          <label>[Table]: </label>
-                          <select>
-                            <option>Table 1</option>
-                            <option>Table 2</option>
-                            <option>Table 3</option>
-                          </select>
-                          <label>.Column: </label>
-                          <select>
-                            <option>Column 1</option>
-                            <option>Column 2</option>
-                            <option>Column 3</option>
-                          </select>
-                        </div>
-                      ) : null}
-                    </div>
-                    <div
-                      className="button delete-button delete-column-button"
-                      onClick={() => this.deleteColumn(index)}
-                    >
-                      Delete Column
-                    </div>
-                  </div>
+                  <Column
+                    key={index}
+                    index={index}
+                    column={column}
+                    data_type={data_type}
+                    deleteColumn={this.deleteColumn}
+                    addConstraint={this.addConstraint}
+                    removeConstraint={this.removeConstraint}
+                    handleInputChange={this.handleInputChange}
+                  />
                 );
               })}
             </div>
