@@ -148,62 +148,62 @@ class Columns extends React.Component {
           >
             {!this.props.open_columns_view ? "Open" : "Close"}
           </label>
-          {this.props.open_columns_view ? (
-            <div>
-              <hr className="header-hr" />
-              <div
-                className="button view-more-button"
-                onClick={() => this.showAddNewColumn(true)}
-              >
-                Add New Column
-              </div>
-              {this.state.show_add_new_column ? (
-                <Column
-                  key="-1"
-                  index="-1"
-                  column={this.state.new_column}
-                  data_type={data_type}
-                  addColumn={this.addColumn}
-                  deleteColumn={this.removeAddNewColumn}
-                  addConstraint={this.addConstraint}
-                  removeConstraint={this.removeConstraint}
-                  handleInputChange={this.handleInputChange}
-                />
-              ) : null}
-
-              {this.props.data.map((data, index) => {
-                return (
-                  <div key={index}>
-                    <hr />
-                    <label>
-                      Column Name: {data.column_name}
-                      <label
-                        className="close-open-button"
-                        onClick={() => {
-                          this.props.openColumnInfo(index);
-                        }}
-                      >
-                        {!this.props.show_columns[index] ? "Open" : "Close"}
-                      </label>
-                    </label>
-                    {this.props.show_columns[index] ? (
-                      <div>
-                        <hr className="header-hr" />
-                        <label>Data Type: {data.data_type}</label>
-                        <br />
-                        <label>
-                          Allows Null:{" "}
-                          {data.allows_null.toString().toUpperCase()}
-                        </label>
-                      </div>
-                    ) : null}
-                    <hr />
-                  </div>
-                );
-              })}
-            </div>
-          ) : null}
         </label>
+
+        {this.props.open_columns_view ? (
+          <div>
+            <hr className="header-hr" />
+            <div
+              className="button view-more-button"
+              onClick={() => this.showAddNewColumn(true)}
+            >
+              Add New Column
+            </div>
+            {this.state.show_add_new_column ? (
+              <Column
+                key="-1"
+                index="-1"
+                column={this.state.new_column}
+                data_type={data_type}
+                addColumn={this.addColumn}
+                deleteColumn={this.removeAddNewColumn}
+                addConstraint={this.addConstraint}
+                removeConstraint={this.removeConstraint}
+                handleInputChange={this.handleInputChange}
+              />
+            ) : null}
+
+            {this.props.data.map((data, index) => {
+              return (
+                <div key={index}>
+                  <hr />
+                  <label className="center-label page-label">
+                    Column Name: {data.column_name}
+                    <label
+                      className="close-open-button"
+                      onClick={() => {
+                        this.props.openColumnInfo(index);
+                      }}
+                    >
+                      {!this.props.show_columns[index] ? "Open" : "Close"}
+                    </label>
+                  </label>
+                  {this.props.show_columns[index] ? (
+                    <div>
+                      <hr className="header-hr" />
+                      <label className="center-label">Data Type: {data.data_type}</label>
+                      <br />
+                      <label className="center-label">
+                        Allows Null: {data.allows_null.toString().toUpperCase()}
+                      </label>
+                    </div>
+                  ) : null}
+                  <hr />
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
       </div>
     );
   }

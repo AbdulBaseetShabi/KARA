@@ -41,49 +41,49 @@ class TableConstraints extends React.Component {
           >
             {!this.props.open_constraints_view ? "Open" : "Close"}
           </label>
-          {this.props.open_constraints_view ? (
-            <div>
-              <hr className="header-hr" />
-              <label>
-                <span className="">NOTE:</span> Click on relationship to delete
-              </label>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Table Column</th>
-                    <th>Constraints</th>
-                    <th>[Table].Column</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.props.data.map((data, index) => {
-                    return (
-                      <tr
-                        key={index}
-                        onClick={() => {
-                          this.changeDeleteModalState(true, data);
-                        }}
-                      >
-                        <td>{data.column_name}</td>
-                        <td>{data.constraint_type}</td>
-                        <td>
-                          {data.relation_column.length !== 0 &&
-                          data.relation_table.length !== 0
-                            ? "[" +
-                              data.relation_table +
-                              "]." +
-                              data.relation_column
-                            : "N/A"}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          ) : null}
-          <br />
         </label>
+        {this.props.open_constraints_view ? (
+          <div>
+            <hr className="header-hr" />
+            <label className="center-label">
+              <span style={{fontWeight: "600"}}>NOTE:</span> Click on relationship to delete
+            </label>
+            <table>
+              <thead>
+                <tr>
+                  <th>Table Column</th>
+                  <th>Constraints</th>
+                  <th>[Table].Column</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.props.data.map((data, index) => {
+                  return (
+                    <tr
+                      key={index}
+                      onClick={() => {
+                        this.changeDeleteModalState(true, data);
+                      }}
+                    >
+                      <td>{data.column_name}</td>
+                      <td>{data.constraint_type}</td>
+                      <td>
+                        {data.relation_column.length !== 0 &&
+                        data.relation_table.length !== 0
+                          ? "[" +
+                            data.relation_table +
+                            "]." +
+                            data.relation_column
+                          : "N/A"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : null}
+        <br />
       </div>
     );
   }
