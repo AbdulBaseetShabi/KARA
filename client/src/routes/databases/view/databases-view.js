@@ -26,7 +26,10 @@ class DatabasesView extends React.Component {
       show_delete_prompt: false,
     };
     this.db_to_delete = "";
-    this.new_db_name = "";
+    this.new_db_name = {
+      from: "",
+      to: "",
+    };
     this.modified_db = {
       previous_name: "",
       current_name: "",
@@ -57,7 +60,7 @@ class DatabasesView extends React.Component {
   }
 
   controlCreateNewDataBase(value) {
-    this.new_db_name = value;
+    this.new_db_name.to = value;
   }
 
   controlChangeDataBaseName(value) {
@@ -80,9 +83,10 @@ class DatabasesView extends React.Component {
     }
   }
 
-  createNewDatabase() {
+  createNewDatabase(old_name) {
+    this.new_db_name.from = old_name;
     console.log(this.new_db_name);
-    if (this.new_db_name.length === 0) {
+    if (this.new_db_name.to.length === 0) {
       this.updatePopUp({ type: "warning", message: "No name specified" });
     } else {
       this.setState({ creating_new_db: true });

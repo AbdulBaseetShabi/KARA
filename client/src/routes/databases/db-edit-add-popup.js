@@ -34,7 +34,7 @@ function AddDB(props) {
                       if (props.is_add_new_db) {
                         props.createNewDatabase();
                       } else {
-                        props.changeDataBaseName();
+                        props.changeDataBaseName(props.old_name);
                       }
                     }
               }
