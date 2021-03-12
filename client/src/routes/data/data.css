@@ -28,3 +28,22 @@ tbody > tr:hover{
     background-color:#1A3263;
     cursor: pointer;
 }
+
+#last-row-expection{
+    color: black;
+    background-color: #e8e2db;
+    cursor: auto;
+}
+
+#last-row-expection > td > div{
+    color: #fffffe;
+    background-color: black;
+    cursor: pointer;
+    border: 1px solid black;
+    margin: 2px;
+}
+
+#last-row-expection > td > div:hover{
+    background-color: #1A3263;
+}
+

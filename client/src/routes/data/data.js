@@ -190,6 +190,11 @@ class Data extends React.Component {
                 </tr>
               );
             })}
+            <tr id="last-row-expection">
+              <td colSpan={this.keys.length}>
+                <div>Add New Row</div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
