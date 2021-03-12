@@ -3,6 +3,7 @@ import "./data.css";
 import PopUp from "../../widgets/pop-ups/message-pop-up/pop-ups";
 import RowOptions from "../../widgets/pop-ups//row-option/row-option";
 import DeletePopUp from "../../widgets/pop-ups/delete-pop-up/delete-pop-up";
+import AddNewRow from "./add-new-row";
 
 const mock_data = [
   {
@@ -61,6 +62,8 @@ class Data extends React.Component {
       response: {},
       is_loading: false,
       show_delete_prompt: false,
+      is_loading_add_new_row: false,
+      should_show_add_row: false,
     };
     this.deleteRow = this.deleteRow.bind(this);
     this.changeDeleteModalState = this.changeDeleteModalState.bind(this);
@@ -68,7 +71,11 @@ class Data extends React.Component {
     this.shouldShowRowOptions = this.shouldShowRowOptions.bind(this);
     this.updateRowValue = this.updateRowValue.bind(this);
     this.saveChanges = this.saveChanges.bind(this);
-    this.new_row_values = [];
+    this.updateAddRowValue = this.updateAddRowValue.bind(this);
+    this.addRow = this.addRow.bind(this);
+    this.shouldShowAddRow = this.shouldShowAddRow.bind(this);
+    this.updated_row_values = [];
+    this.new_row_values = {};
     this.keys = [];
     this.data = [];
     this.edit_row_number = null;
@@ -77,10 +84,10 @@ class Data extends React.Component {
 
   shouldShowRowOptions(row, boolean, edit_row_number) {
     if (!boolean) {
-      this.new_row_values = [];
+      this.updated_row_values = [];
     } else {
       for (let i = 0; i < this.keys.length; i++) {
-        this.new_row_values.push({
+        this.updated_row_values.push({
           column_name: this.keys[i],
           old_value: "",
           new_value: "",
@@ -95,8 +102,12 @@ class Data extends React.Component {
   }
 
   updateRowValue(index, oldValue, newValue) {
-    this.new_row_values[index]["old_value"] = oldValue;
-    this.new_row_values[index]["new_value"] = newValue;
+    this.updated_row_values[index]["old_value"] = oldValue;
+    this.updated_row_values[index]["new_value"] = newValue;
+  }
+
+  updateAddRowValue(column, value) {
+    this.new_row_values[column] = value;
   }
 
   deleteRow() {
@@ -109,7 +120,7 @@ class Data extends React.Component {
   }
 
   saveChanges() {
-    this.new_row_values = this.new_row_values.map((row) => {
+    this.updated_row_values = this.updated_row_values.map((row) => {
       if (row["old_value"].length === 0 && row["new_value"].length === 0) {
         let index = this.keys.indexOf(row["column_name"]);
         let old_value = this.data[this.edit_row_number][index];
@@ -123,13 +134,23 @@ class Data extends React.Component {
         return row;
       }
     });
-    console.log(this.new_row_values);
+    console.log(this.updated_row_values);
     this.updatePopUp({ type: "error", message: "Error Occured" });
     this.shouldShowRowOptions([], false, null);
   }
 
   updatePopUp(response) {
     this.setState({ response: response });
+  }
+
+  shouldShowAddRow(state) {
+    this.new_row_values = {};
+    this.setState({ should_show_add_row: state });
+  }
+
+  addRow() {
+    console.log(this.new_row_values);
+    this.setState({ is_loading_add_new_row: true });
   }
 
   render() {
@@ -148,6 +169,14 @@ class Data extends React.Component {
           saveChanges={this.saveChanges}
           openDeleteModal={this.changeDeleteModalState}
         ></RowOptions>
+        <AddNewRow
+          show={this.state.should_show_add_row}
+          addRow={this.addRow}
+          updateAddRowValue={this.updateAddRowValue}
+          shouldShowAddRow={this.shouldShowAddRow}
+          keys={this.keys}
+          loading={this.state.is_loading_add_new_row}
+        />
         <DeletePopUp
           show={this.state.show_delete_prompt}
           openModal={this.changeDeleteModalState}
@@ -192,7 +221,9 @@ class Data extends React.Component {
             })}
             <tr id="last-row-expection">
               <td colSpan={this.keys.length}>
-                <div>Add New Row</div>
+                <div onClick={() => this.shouldShowAddRow(true)}>
+                  Add New Row
+                </div>
               </td>
             </tr>
           </tbody>
