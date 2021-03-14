@@ -2,6 +2,12 @@
     border: 5px solid black;
     text-align: center;
     color: #fffffe!important;
+    
+}
+.nav-link:hover {
+    cursor: pointer;
+    background-color: #e8e2db;
+    color: #1A3263!important;
 }
 
 .nav-link{
