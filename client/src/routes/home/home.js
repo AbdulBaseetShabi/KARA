@@ -17,17 +17,17 @@ const suggested_drivers = [
   "MySQL ODBC 8.0 Unicode Driver",
 ];
 
-const instruction = [
-  {
-    text: "Refer to this link to find your ODBC driver for Windows",
-    link:
-      "https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/check-the-odbc-sql-server-driver-version-windows?view=sql-server-ver15",
-  },
-  {
-    text: "Refer to this link to find your ODBC driver for MacOS",
-    link: "http://support.openlinksw.com/support/mac-faq.html#8",
-  },
-];
+// const instruction = [
+//   {
+//     text: "Refer to this link to find your ODBC driver for Windows",
+//     link:
+//       "https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/check-the-odbc-sql-server-driver-version-windows?view=sql-server-ver15",
+//   },
+//   {
+//     text: "Refer to this link to find your ODBC driver for MacOS",
+//     link: "http://support.openlinksw.com/support/mac-faq.html#8",
+//   },
+// ];
 class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -74,15 +74,12 @@ class Home extends React.Component {
     }
   }
 
-  // componentDidMount(){
-
-  // }
-
   closeSuggestions() {
-    this.setState({
-      show_suggestions: false,
-      suggestions: [],
-    });
+    if (this.state.show_suggestions) {
+      this.setState({
+        show_suggestions: false,
+      });
+    }
   }
 
   updatePopUp(response) {
@@ -102,20 +99,23 @@ class Home extends React.Component {
   }
 
   logIn() {
-    this.setState({ loading: true });
-    HTTPCalls("GET", "", "", (res) => {
-      console.log(res);
-      if (res) {
-        window.sessionStorage.setItem(
-          Global["APP_KEY"],
-          JSON.stringify(this.userData)
-        );
-        this.setState({ loading: false });
-        window.location.replace("/databases");
-      } else {
-        this.updatePopUp({ type: "error", message: "Error Occured" });
+    this.setState({ loading: true, show_suggestions: false });
+    HTTPCalls(
+      "POST",
+      "/login",
+      { user_credential: this.userData },
+      (res) => {
+        if (res["status"] === 200) {
+          window.sessionStorage.setItem(
+            Global["APP_KEY"],
+            JSON.stringify(this.userData)
+          );
+          window.location.replace("/databases");
+        } else {
+          this.updatePopUp({ type: "error", message: res["response"] });
+        }
       }
-    });
+    );
   }
 
   render() {
@@ -136,9 +136,10 @@ class Home extends React.Component {
             Authentication Page
           </label>
           <hr />
-          <div style={{width: '100%', position: 'relative'}}>
+          <div style={{ width: "100%", position: "relative" }}>
             <label className="center-label">Driver</label>
             <input
+              autoComplete="off"
               className="center-div"
               type="text"
               id="driver"
@@ -147,7 +148,6 @@ class Home extends React.Component {
               onChange={(e) => {
                 this.modifyLoginCredentials("driver", e.target.value);
               }}
-              onBlur={this.closeSuggestions}
             ></input>
             {this.state.show_suggestions ? (
               <div className="suggestions">
@@ -175,6 +175,7 @@ class Home extends React.Component {
             onChange={(e) => {
               this.modifyLoginCredentials("server", e.target.value);
             }}
+            onFocus={this.closeSuggestions}
           ></input>
           <label className="center-label">User ID/Name</label>
           <input
@@ -185,6 +186,7 @@ class Home extends React.Component {
             onChange={(e) => {
               this.modifyLoginCredentials("user_id", e.target.value);
             }}
+            onFocus={this.closeSuggestions}
           ></input>
           <label className="center-label">Password</label>
           <input
@@ -195,6 +197,7 @@ class Home extends React.Component {
             onChange={(e) => {
               this.modifyLoginCredentials("password", e.target.value);
             }}
+            onFocus={this.closeSuggestions}
           ></input>
           <hr />
           <div
