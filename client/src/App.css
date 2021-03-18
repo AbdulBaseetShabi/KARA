@@ -119,12 +119,13 @@ input{
 
 .suggestion-items{
     border: 1px solid black;
-    cursor: pointer;
     white-space: nowrap;
     overflow-x: hidden;
+    z-index: 999;
 }
 
 .suggestion-items:hover{
     color: #FFFFFE;
     background-color: #1A3263;
+    cursor: pointer;
 }
