@@ -2,8 +2,32 @@ import React from "react";
 import PopUp from "../../widgets/pop-ups/message-pop-up/pop-ups";
 import "./home.css";
 import HTTPCalls from "../../services/api-connect";
-import Global from "../../services/global"
+import Global from "../../services/global";
 
+const suggested_drivers = [
+  "SQL Server",
+  "Microsoft Access Driver (*.mdb, *.accdb)",
+  "Microsoft Excel Driver (*.xls, *.xlsx, *.xlsm, *.xlsb)",
+  "Microsoft Access Text Driver (*.txt, *.csv)",
+  "SQL Server Native Client 11.0",
+  "SQL Server Native Client RDA 11.0",
+  "ODBC Driver 13 for SQL Server",
+  "ODBC Driver 17 for SQL Server",
+  "MySQL ODBC 8.0 ANSI Driver",
+  "MySQL ODBC 8.0 Unicode Driver",
+];
+
+const instruction = [
+  {
+    text: "Refer to this link to find your ODBC driver for Windows",
+    link:
+      "https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/check-the-odbc-sql-server-driver-version-windows?view=sql-server-ver15",
+  },
+  {
+    text: "Refer to this link to find your ODBC driver for MacOS",
+    link: "http://support.openlinksw.com/support/mac-faq.html#8",
+  },
+];
 class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -13,25 +37,68 @@ class Home extends React.Component {
     this.state = {
       loading: false,
       response: {},
+      show_suggestions: false,
+      suggestions: [],
+      selected_driver: "",
     };
     this.updatePopUp = this.updatePopUp.bind(this);
+    this.closeSuggestions = this.closeSuggestions.bind(this);
     this.userData = {
       server: "",
       user_id: "",
       password: "",
+      driver: "",
     };
   }
 
   modifyLoginCredentials(credential, value) {
     this.userData[credential] = value;
+    if (credential === "driver") {
+      this.setState((prevState, prevProps) => {
+        let new_state = {
+          show_suggestions: false,
+          suggestions: [],
+          selected_driver: "",
+        };
+        let lowercase_value = value.toLowerCase();
+        if (value.length !== 0) {
+          new_state.show_suggestions = true;
+          new_state.suggestions = suggested_drivers.filter((suggestion) => {
+            return suggestion.toLowerCase().startsWith(lowercase_value);
+          });
+          new_state.selected_driver = value;
+        }
+
+        return new_state;
+      });
+    }
   }
 
   // componentDidMount(){
-    
+
   // }
+
+  closeSuggestions() {
+    this.setState({
+      show_suggestions: false,
+      suggestions: [],
+    });
+  }
 
   updatePopUp(response) {
     this.setState({ loading: false, response: response });
+  }
+
+  selectDriver(index) {
+    this.setState((prevState, prevProps) => {
+      let selected_driver = prevState.suggestions[index];
+      this.userData["driver"] = selected_driver;
+      return {
+        show_suggestions: false,
+        suggestions: [],
+        selected_driver: selected_driver,
+      };
+    });
   }
 
   logIn() {
@@ -69,6 +136,36 @@ class Home extends React.Component {
             Authentication Page
           </label>
           <hr />
+          <div style={{width: '100%', position: 'relative'}}>
+            <label className="center-label">Driver</label>
+            <input
+              className="center-div"
+              type="text"
+              id="driver"
+              value={this.state.selected_driver}
+              placeholder="Driver..."
+              onChange={(e) => {
+                this.modifyLoginCredentials("driver", e.target.value);
+              }}
+              onBlur={this.closeSuggestions}
+            ></input>
+            {this.state.show_suggestions ? (
+              <div className="suggestions">
+                {this.state.suggestions.map((suggestion, index) => {
+                  return (
+                    <div
+                      className="suggestion-items"
+                      key={index}
+                      onClick={(e) => this.selectDriver(index)}
+                    >
+                      {suggestion}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
+          </div>
+
           <label className="center-label">Server</label>
           <input
             className="center-div"

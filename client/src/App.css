@@ -103,3 +103,28 @@ input{
     display: block;
     margin: 0 auto;
 }
+
+.suggestions{
+    background-color: #e8e2db;
+    color: #1A3263;
+    position: absolute;
+    max-width: 80%;
+    margin: 0 auto;
+    display: block;
+    top: 62px;
+    left: 10%;
+    border: 2px solid black;
+    z-index: 100;
+}
+
+.suggestion-items{
+    border: 1px solid black;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+
+.suggestion-items:hover{
+    color: #FFFFFE;
+    background-color: #1A3263;
+}
