@@ -1,15 +1,19 @@
 import Global from "./global";
 
 function HTTPCalls(method, endpoint, data, callback) {
-  const Http = new XMLHttpRequest();
-  Http.open(method, Global["HOST_URL"]);
-  Http.send();
+  const HTTP = new XMLHttpRequest();
+  HTTP.open(method, `${Global["API_URL"]}${endpoint}`);
+  HTTP.setRequestHeader('Content-Type', 'application/json');
 
-  Http.onreadystatechange = function () {
-    if (this.readyState === 4 && this.status === 200) {
-      callback(Http.response);
+  HTTP.onreadystatechange = function () {
+    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+      let response = JSON.parse(HTTP.response);
+      callback(response);
     }
   };
+
+  let payload = data === null || data === undefined ? null : JSON.stringify(data);
+  HTTP.send(payload);
 }
 
 export default HTTPCalls;
