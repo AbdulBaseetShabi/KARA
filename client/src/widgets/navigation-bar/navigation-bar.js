@@ -1,8 +1,14 @@
 import React from "react";
 import "./navigation-bar.css";
+import Global from "../../services/global"
 
 function previousPath(currentPath) {
   window.history.back();
+}
+
+function logOut() {
+  sessionStorage.removeItem(Global["APP_KEY"]);
+  window.location = "/home"
 }
 
 function NavigationBar(props) {
@@ -25,15 +31,10 @@ function NavigationBar(props) {
           <i id="back-arrow" className="fas fa-arrow-left fa-2x"></i>
         </div>
       ) : null}
-      <a className="col nav-link" href="/table">
-        <div>Table</div>
-      </a>
       <a className="col nav-link" href="/databases">
         <div>Database</div>
       </a>
-      <a className="col nav-link" href="/Logout">
-        <div>Logout</div>
-      </a>
+      <div className="col nav-link" onClick={() => {logOut()}}>Logout</div>
     </div>
   );
 }
