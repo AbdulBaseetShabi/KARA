@@ -1,51 +1,68 @@
-import enum
-from flask import Flask, json
-from flask import jsonify
-from flask import request
-import mysql.connector
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+from connector import Connector
+import json
 
 app = Flask(__name__)
-
-mysql_db = mysql.connector.connect(
-  host="localhost",
-  user="root",
-  password=""
-)
-
-cursor = mysql_db.cursor()
+cors = CORS(app, resources={r"*": {"origins": "*"}})
 
 DEFAULT_SIZE = 255
 
+@app.route('/', methods=["GET"])
+def running_server():
+    return jsonify({'status': 200, 'response': 'Server is running ...'})
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    return response
+
+def User_Auth(user_auth):
+    return Connector(driver=user_auth['driver'],server=user_auth['server'], uid=user_auth['user_id'], password=user_auth['password'])
+
 #### DB Routes
+
+@app.route("/login", methods=["POST"])
+def login():
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth)
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
+    return jsonify({'status': 200, 'response': 'Valid Credentials'})
 
 @app.route('/db/create', methods=['POST'])
 def create_db():
+    connector = Connector()
+
     db_name = request.json['db_name']
 
-    if check_db(db_name):
+    if connector.check_db(db_name):
         return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' already exists!'})
     
     create_sql = "CREATE DATABASE " + "`" + db_name + "`" + ";"
 
-    print(create_sql)
+    connector.execute(create_sql)
 
-    cursor.execute(create_sql)
-
-    if check_db(db_name):
+    if connector.check_db(db_name):
         return jsonify({'status': 200, 'response': 'Database named ' + db_name + ' successfully created!'})
     else:
         return jsonify({'status': 400, 'response': 'Unable to create database named ' + db_name + '!'})    
 
 @app.route('/db/delete', methods=['DELETE'])
 def delete_db():
+    connector = Connector()
+
     db_name = request.json['db_name']
 
-    if check_db(db_name):
+    if connector.check_db(db_name):
         drop_sql = "DROP DATABASE " + "`" + db_name + "`" + ";"
 
-        cursor.execute(drop_sql)
+        connector.execute(drop_sql)
 
-        if not check_db(db_name):
+        if not connector.check_db(db_name):
             return jsonify({'status': 200, 'response': 'Database named ' + db_name + ' successfully deleted!'})
         else:
             return jsonify({'status': 400, 'response': 'Unable to delete database named ' + db_name + '!'})
@@ -57,12 +74,14 @@ def delete_db():
 
 @app.route('/table/create', methods=['POST'])
 def create_table():
+    connector = Connector()
+
     db_name = request.json['db_name']
     table_name = request.json['table_name']
     columns = request.json['columns']
 
-    if check_db(db_name):
-        if check_table(db_name, table_name):
+    if connector.check_db(db_name):
+        if connector.check_table(db_name, table_name):
             return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' already exists!'})
 
         create_sql = "CREATE TABLE " + "`" + table_name + "` ("
@@ -80,13 +99,11 @@ def create_table():
 
         use_db = "USE " + "`" + db_name + "`"
 
-        print(create_sql)
+        connector.execute(use_db)
 
-        cursor.execute(use_db)
+        connector.execute(create_sql)
 
-        cursor.execute(create_sql)
-
-        if check_table(db_name, table_name):
+        if connector.check_table(db_name, table_name):
             return jsonify({'status': 200, 'response': 'Successfully created table named ' + table_name + ' in the database named ' + db_name})
         else:
             return jsonify({'status': 400, 'response': 'Unable to create table named ' + table_name + '!'})
@@ -95,22 +112,22 @@ def create_table():
 
 @app.route('/table/delete', methods=['DELETE'])
 def delete_table():
+    connector = Connector()
+
     db_name = request.json['db_name']
     table_name = request.json['table_name']
 
-    if check_db(db_name):
-        if check_table(db_name, table_name):
+    if connector.check_db(db_name):
+        if connector.check_table(db_name, table_name):
             drop_sql = "DROP TABLE " + "`" + table_name + "`;"
 
             use_db = "USE " + "`" + db_name + "`"
 
-            print(drop_sql)
+            connector.execute(use_db)
 
-            cursor.execute(use_db)
+            connector.execute(drop_sql)
 
-            cursor.execute(drop_sql)
-
-            if not check_table(db_name, table_name):
+            if not connector.check_table(db_name, table_name):
                 return jsonify({'status': 200, 'response': 'Successfully deleted table named ' + table_name + ' in the database named ' + db_name})
             else:
                 return jsonify({'status': 400, 'response': 'Unable to delete table named ' + table_name + '!'})
@@ -121,15 +138,17 @@ def delete_table():
 
 @app.route('/table/add', methods=['POST'])
 def add_row():
+    connector = Connector()
+
     db_name = request.json['db_name']
     table_name = request.json['table_name']
     columns = request.json['columns']
     values = request.json['values']
 
-    if check_db(db_name):
-        if check_table(db_name, table_name):
+    if connector.check_db(db_name):
+        if connector.check_table(db_name, table_name):
             use_db = "USE " + "`" + db_name + "`"
-            cursor.execute(use_db)
+            connector.execute(use_db)
 
             add_sql = "INSERT INTO " + "`" + table_name + "` ("
 
@@ -143,19 +162,17 @@ def add_row():
 
             for (index, column) in enumerate(columns):
                 if index != len(columns) - 1:
-                    add_sql += "%s, "
+                    add_sql += "?, "
                 else:
-                    add_sql += "%s"
+                    add_sql += "?"
 
             add_sql += ");"
 
-            print(add_sql)
+            connector.execute(add_sql, values)
 
-            cursor.execute(add_sql, values)
+            connector.commit()
 
-            mysql_db.commit()
-
-            return jsonify({'status': 200, 'response': 'Record with ID ' + str(cursor.lastrowid) + ' added to table named ' + table_name + ' in the database named ' + db_name})
+            return jsonify({'status': 200, 'response': 'Record with ID ' + str(connector.lastrowid()) + ' added to table named ' + table_name + ' in the database named ' + db_name})
         else:
             return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' does not exist in the database named ' + db_name + '!'})
     else:
@@ -163,14 +180,16 @@ def add_row():
 
 @app.route('/table/remove', methods=['DELETE'])
 def delete_row():
+    connector = Connector()
+
     db_name = request.json['db_name']
     table_name = request.json['table_name']
     queries = request.json['queries']
 
-    if check_db(db_name):
-        if check_table(db_name, table_name):
+    if connector.check_db(db_name):
+        if connector.check_table(db_name, table_name):
             use_db = "USE " + "`" + db_name + "`"
-            cursor.execute(use_db)
+            connector.execute(use_db)
 
             delete_sql = "DELETE FROM " + "`" + table_name + "`" + " WHERE "
 
@@ -182,13 +201,11 @@ def delete_row():
 
             delete_sql += ";"
 
-            print(delete_sql)
-
-            cursor.execute(delete_sql)
+            connector.execute(delete_sql)
             
-            mysql_db.commit()
+            connector.commit()
 
-            return jsonify({'status': 200, 'response': str(cursor.rowcount) + ' row(s) deleted from table named ' + table_name + ' in the database named ' + db_name})
+            return jsonify({'status': 200, 'response': str(connector.rowcount()) + ' row(s) deleted from table named ' + table_name + ' in the database named ' + db_name})
         else:
             return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' does not exist in the database named ' + db_name + '!'})
     else:
@@ -196,15 +213,17 @@ def delete_row():
 
 @app.route('/table/find', methods=['GET'])
 def find_row():
+    connector = Connector()
+
     db_name = request.json['db_name']
     table_name = request.json['table_name']
     columns = request.json['columns'] if len(request.json['columns']) > 0 else None
     queries = request.json['queries'] if len(request.json['queries']) > 0 else None
 
-    if check_db(db_name):
-        if check_table(db_name, table_name):
+    if connector.check_db(db_name):
+        if connector.check_table(db_name, table_name):
             use_db = "USE " + "`" + db_name + "`"
-            cursor.execute(use_db)
+            connector.execute(use_db)
 
             select_sql = "SELECT "
 
@@ -229,13 +248,11 @@ def find_row():
             else:
                 select_sql += ";"
 
-            print(select_sql)
+            connector.execute(select_sql)
 
-            cursor.execute(select_sql)
+            row_headers = [x[0] for x in connector.description()]
 
-            row_headers = [x[0] for x in cursor.description]
-
-            rows = cursor.fetchall()
+            rows = connector.fetchall()
 
             result = []
 
@@ -248,29 +265,6 @@ def find_row():
     else:
        return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})    
 
-#### Helper Functions
-
-def check_db(db_name):
-    cursor.execute("SHOW DATABASES")
-
-    for (db,) in cursor:
-        if db == db_name:
-            return True
-    
-    return False
-
-def check_table(db_name, table_name):
-    use_db = "USE " + "`" + db_name + "`;"
-
-    cursor.execute(use_db)
-
-    cursor.execute("SHOW TABLES")
-
-    for (table, ) in cursor:
-        if table == table_name:
-            return True
-
-    return False
-
 if __name__ == '__main__':
     app.run(debug=True)
+    # app.run()
