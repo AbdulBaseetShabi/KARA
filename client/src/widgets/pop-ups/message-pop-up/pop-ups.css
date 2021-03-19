@@ -24,6 +24,7 @@
     width: 100%;
     text-align: center;
     cursor: pointer;
+    bottom: -24px;
 }
 
 .fade-in-animation{
