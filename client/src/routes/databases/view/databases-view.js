@@ -203,7 +203,6 @@ class DatabasesView extends React.Component {
           modaltype={this.state.response.type}
           show={Object.keys(this.state.response).length !== 0}
           closePopUp={this.updatePopUp}
-          successReload={this.successReload}
         >
           {this.state.response.message}
         </PopUp>
