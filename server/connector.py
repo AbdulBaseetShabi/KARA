@@ -48,14 +48,14 @@ class Connector:
         return False
 
     def check_table(self, db, name):
-        use_db = "USE " + "`" + db + "`;"
+        use_db = "USE " + "[" + db + "];"
 
         self._cursor.execute(use_db)
 
-        self._cursor.execute("SHOW TABLES")
+        self._cursor.execute("SELECT name FROM sys.tables")
 
         for (table, ) in self._cursor:
-            if table == name:
+            if table.lower() == name.lower():
                 return True
 
         return False      
