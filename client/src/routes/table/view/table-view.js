@@ -1,5 +1,8 @@
 import React from "react";
+import HTTPCalls from "../../../services/api-connect";
+import Global from "../../../services/global";
 import DeletePopUp from "../../../widgets/pop-ups/delete-pop-up/delete-pop-up";
+import PopUp from "../../../widgets/pop-ups/message-pop-up/pop-ups";
 import AddNewTable from "./add-new-table";
 import "./table-view.css";
 
@@ -17,8 +20,8 @@ class TableView extends React.Component {
   constructor(props) {
     super(props);
     const urlParams = new URLSearchParams(window.location.search);
-    const db = urlParams.get('db');
-    if (db === null) {
+    this.db = urlParams.get('db');
+    if (this.db === null) {
       window.location.replace('/databases');
     }
     this.state = {
@@ -28,6 +31,8 @@ class TableView extends React.Component {
       show_delete_prompt: false,
       show_add_new_table: false,
       show_change_table_name_view: false,
+      response: {},
+      tables: []
     };
     
     this.table_name_to_change = {
@@ -41,12 +46,27 @@ class TableView extends React.Component {
     this.changeEditTableNameModalState = this.changeEditTableNameModalState.bind(this);
     this.controlChangeTableName = this.controlChangeTableName.bind(this);
     this.addTable = this.addTable.bind(this);
+    this.updatePopUp = this.updatePopUp.bind(this);
     this.delete_table_or_all_entries = false;
     this.table_to_delete = "";
   }
 
   componentDidMount(){
-    
+    HTTPCalls(
+      "POST",
+      "/table/info",
+      {
+        user_credential: JSON.parse(sessionStorage.getItem(Global["APP_KEY"])),
+        db_name: this.db
+      },
+      (res) => {
+        if (res["status"] === 200) {
+          this.setState({ tables: res["response"] });
+        } else {
+          this.updatePopUp({ type: "error", message: res["response"] });
+        }
+      }
+    );
   }
 
   changeDeleteModalState(state, table_to_delete, delete_table_or_all_entries) {
@@ -93,9 +113,24 @@ class TableView extends React.Component {
     }
   }
 
+  updatePopUp(response) {
+    if (response === "reload") {
+      window.location.reload();
+    } else {
+      this.setState({ response: response });
+    }
+  }
+
   render() {
     return (
       <div id="table-view-container">
+        <PopUp
+          modaltype={this.state.response.type}
+          show={Object.keys(this.state.response).length !== 0}
+          closePopUp={this.updatePopUp}
+        >
+          {this.state.response.message}
+        </PopUp>
         <AddNewTable
           show={this.state.show_add_new_table}
           openModal={this.changeAddTableModalState}
@@ -174,21 +209,19 @@ class TableView extends React.Component {
         </label>
         <hr className="header-hr" />
         <div className="row d-flex justify-content-center">
-          {mock_data.map((table, index) => {
+          {this.state.tables.map((table, index) => {
+            let last_modified_date = new Date(table.modify_date);
+            let date_created = new Date(table.create_date);
             return (
               <div key={index} className="col-3 custom-card">
                 <label className="center-label db-name-label">
                   {table.table_name}
                 </label>
                 <hr className="header-hr" />
-                <label>Number of Entries: {table.no_of_entries} records</label>
-                <br />
-                <label>
-                  Number of Columns: {table.no_of_colums} columns
-                </label>{" "}
-                <br />
-                <label>Size: {table.size}</label> <br />
-                <label>Date Created: {table.date_created}</label>
+                <label className="center-label">Date Last Modified</label>
+                <label className="center-label">{last_modified_date.toLocaleDateString() + " " + last_modified_date.toLocaleTimeString()}</label>
+                <label className="center-label">Date Created</label>
+                <label className="center-label">{date_created.toLocaleDateString() + " " + date_created.toLocaleTimeString()}</label>
                 <br />
                 <a href="/data">
                   <div className="button view-more-button">View Entries</div>

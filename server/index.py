@@ -9,7 +9,6 @@ cors = CORS(app, resources={r"*": {"origins": "*"}})
 DEFAULT_SIZE = 255
 
 #### Helper Function/Routes
-
 @app.route('/', methods=["GET"])
 def running_server():
     return jsonify({'status': 200, 'response': 'Server is running ...'})
@@ -25,7 +24,6 @@ def User_Auth(user_auth, autocommit = False):
     return Connector(driver=user_auth['driver'],server=user_auth['server'], uid=user_auth['user_id'], password=user_auth['password'], autocommit=autocommit)
 
 #### Server Routes
-
 @app.route("/login", methods=["POST"])
 def login():
     try:
@@ -63,7 +61,6 @@ def get_dbs():
 
     except Exception as e:
         return jsonify({'status': 400, 'response': str(e)})
-    return
 
 @app.route('/db/create', methods=['POST'])
 def create_db():
@@ -136,6 +133,34 @@ def db_rename():
         return jsonify({'status': 400, 'response': str(e)})
 
 #### Table Routes
+@app.route('/table/info', methods=['POST'])
+def get_tables():
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth)
+
+        db_name = request.get_json()['db_name']
+
+        if connector.check_db(db_name):
+            get_query = "SELECT name as table_name, create_date, modify_date"\
+                + f" FROM [{db_name}].sys.tables"
+
+            connector.execute(get_query)
+
+            row_headers = [x[0] for x in connector.description()]
+
+            rows = connector.fetchall()
+            print(rows)
+            result = []
+
+            for row in rows:
+                result.append(dict(zip(row_headers, row)))
+
+            return jsonify({'status': 200, 'response': result})
+        else:
+            jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
 
 @app.route('/table/create', methods=['POST'])
 def create_table():
