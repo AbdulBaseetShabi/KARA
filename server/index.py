@@ -107,7 +107,7 @@ def delete_db():
         return jsonify({'status': 400, 'response': str(e)})
 
 @app.route('/db/rename', methods=['POST'])
-def db_rename():
+def rename_db():
     try:
         user_auth = request.get_json()["user_credential"]
         connector = User_Auth(user_auth, True)
@@ -117,16 +117,16 @@ def db_rename():
 
         if connector.check_db(original_db_name):
             if not connector.check_db(new_db_name):
-                drop_sql = "ALTER DATABASE " + "[" + original_db_name + "]" + " MODIFY NAME = " + "[" + new_db_name + "]"
+                rename_sql = "ALTER DATABASE " + "[" + original_db_name + "]" + " MODIFY NAME = " + "[" + new_db_name + "]"
 
-                connector.execute(drop_sql)
+                connector.execute(rename_sql)
 
                 if connector.check_db(new_db_name):
                     return jsonify({'status': 200, 'response': 'Database ' + original_db_name + ' successfully renamed to ' + new_db_name + '!'})
                 else:
                     return jsonify({'status': 400, 'response': 'Unable to rename database named ' + original_db_name + '!'})
             else:
-                return jsonify({'status': 400, 'response': 'A database in you server already has the name ' + new_db_name})                
+                return jsonify({'status': 400, 'response': 'A database in your server already has the name ' + new_db_name})                
         else:
             return jsonify({'status': 400, 'response': 'Database named ' + original_db_name + ' does not exist!'})
     except Exception as e:
@@ -159,6 +159,36 @@ def get_tables():
             return jsonify({'status': 200, 'response': result})
         else:
             jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
+
+@app.route('/table/rename', methods=['POST'])
+def rename_table():
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth, True)
+
+        db_name = request.get_json()["db_name"]
+        original_table_name = request.get_json()['table_name']['from']
+        new_table_name = request.get_json()['table_name']['to']
+
+        if connector.check_db(db_name) and connector.check_table(db_name, original_table_name):
+            if not connector.check_table(db_name, new_table_name):
+                use_db_sql = "USE "  + db_name 
+                connector.execute(use_db_sql)
+
+                rename_sql = "EXEC sp_rename " + "'[dbo].[" + original_table_name + "]', '" + new_table_name + "'";
+                
+                connector.execute(rename_sql)
+
+                if connector.check_table(db_name, new_table_name):
+                    return jsonify({'status': 200, 'response': 'Table named ' + original_table_name + ' in database ' + db_name + ' has successfully been renamed to ' + new_table_name + '!'})
+                else:
+                    return jsonify({'status': 400, 'response': 'Unable to rename the table named ' + original_table_name + ' in database ' + db_name})
+            else:
+                return jsonify({'status': 400, 'response': 'The database ' + db_name + ' in your server already has the name ' + new_table_name})                
+        else:
+            return jsonify({'status': 400, 'response': 'Table in [' + db_name + '].' + original_table_name + ' does not exist!'})
     except Exception as e:
         return jsonify({'status': 400, 'response': str(e)})
 

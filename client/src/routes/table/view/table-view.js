@@ -106,10 +106,37 @@ class TableView extends React.Component {
     this.table_name_to_change.to = event.target.value;
   }
 
-  changeDataBaseName() {
+  changeTableName() {
     console.log(this.table_name_to_change);
     if (this.table_name_to_change.to.length === 0) {
-      alert("Enter a value");
+      this.updatePopUp({ type: "warning", message: "No name specified" });
+    }else if(this.table_name_to_change.to.toLowerCase() === this.table_name_to_change.from.toLowerCase()){
+      this.updatePopUp({ type: "warning", message: "Using this same name" });
+    }else{
+      this.setState({ is_loading_change_table_name: true });
+      HTTPCalls(
+        "POST",
+        "/table/rename",
+        {
+          user_credential: JSON.parse(
+            sessionStorage.getItem(Global["APP_KEY"])
+          ),
+          db_name: this.db,
+          table_name: this.table_name_to_change
+        },
+        (res) => {
+          this.setState({
+            response: {
+              type:
+                res["status"] === 400
+                  ? "error"
+                  : "success",
+              message: res["response"],
+            },
+            is_loading_change_table_name: false,
+          });
+        }
+      );
     }
   }
 
@@ -162,7 +189,7 @@ class TableView extends React.Component {
                     this.state.is_loading_change_table_name
                       ? null
                       : () => {
-                          this.changeDataBaseName();
+                          this.changeTableName();
                         }
                   }
                 >
