@@ -1,17 +1,10 @@
 import React from "react";
+import HTTPCalls from "../../../services/api-connect";
 import AddDB from "../db-edit-add-popup";
 import PopUp from "../../../widgets/pop-ups/message-pop-up/pop-ups";
 import "./databases-view.css";
 import DeletePopUp from "../../../widgets/pop-ups/delete-pop-up/delete-pop-up";
-
-const mock_data = [
-  {
-    db_name: "Tracking",
-    size: "12 GB",
-    no_of_tables: 5,
-    date_created: new Date().toLocaleDateString(),
-  },
-];
+import Global from "../../../services/global";
 
 class DatabasesView extends React.Component {
   constructor(props) {
@@ -24,12 +17,10 @@ class DatabasesView extends React.Component {
       is_add_new_db: false,
       response: {},
       show_delete_prompt: false,
+      databases: [],
     };
     this.db_to_delete = "";
-    this.new_db_name = {
-      from: "",
-      to: "",
-    };
+    this.new_db_name = "";
     this.modified_db = {
       previous_name: "",
       current_name: "",
@@ -42,6 +33,23 @@ class DatabasesView extends React.Component {
     this.updatePopUp = this.updatePopUp.bind(this);
     this.controlCreateNewDataBase = this.controlCreateNewDataBase.bind(this);
     this.controlChangeDataBaseName = this.controlChangeDataBaseName.bind(this);
+  }
+
+  componentDidMount() {
+    HTTPCalls(
+      "POST",
+      "/db/info",
+      {
+        user_credential: JSON.parse(sessionStorage.getItem(Global["APP_KEY"])),
+      },
+      (res) => {
+        if (res["status"] === 200) {
+          this.setState({ databases: res["response"] });
+        } else {
+          this.updatePopUp({ type: "error", message: res["response"] });
+        }
+      }
+    );
   }
 
   changeMessageModalState(state, add_new_or_edit_old, old_name) {
@@ -60,7 +68,7 @@ class DatabasesView extends React.Component {
   }
 
   controlCreateNewDataBase(value) {
-    this.new_db_name.to = value;
+    this.new_db_name = value;
   }
 
   controlChangeDataBaseName(value) {
@@ -83,18 +91,49 @@ class DatabasesView extends React.Component {
     }
   }
 
-  createNewDatabase(old_name) {
-    this.new_db_name.from = old_name;
-    console.log(this.new_db_name);
-    if (this.new_db_name.to.length === 0) {
+  createNewDatabase() {
+    if (this.new_db_name.length === 0) {
       this.updatePopUp({ type: "warning", message: "No name specified" });
     } else {
       this.setState({ creating_new_db: true });
+      HTTPCalls(
+        "POST",
+        "/db/create",
+        {
+          user_credential: JSON.parse(
+            sessionStorage.getItem(Global["APP_KEY"])
+          ),
+          db_name: this.new_db_name,
+        },
+        (res) => {
+          if (res["status"] === 200) {
+            this.setState({
+              creating_new_db: false,
+              response: {
+                type: "success",
+                message: res["response"],
+              },
+            });
+          } else {
+            this.setState({
+              response: {
+                type: "error",
+                message: res["response"],
+              },
+              creating_new_db: false,
+            });
+          }
+        }
+      );
     }
   }
 
   updatePopUp(response) {
-    this.setState({ response: response });
+    if (response === "reload") {
+      window.location.reload();
+    } else {
+      this.setState({ response: response });
+    }
   }
 
   render() {
@@ -122,6 +161,7 @@ class DatabasesView extends React.Component {
           modaltype={this.state.response.type}
           show={Object.keys(this.state.response).length !== 0}
           closePopUp={this.updatePopUp}
+          successReload={this.successReload}
         >
           {this.state.response.message}
         </PopUp>
@@ -130,19 +170,15 @@ class DatabasesView extends React.Component {
           Databases in Current Server
         </label>
         <hr className="header-hr" />
-        <div className="row">
-          {mock_data.map((db, index) => {
+        <div className="row d-flex justify-content-center">
+          {this.state.databases.map((db, index) => {
             return (
-              <div key={index} className="col-4 custom-card">
+              <div key={index} className="col-3 custom-card">
                 <label className="center-label db-name-label">
                   {db.db_name}
                 </label>
                 <hr className="header-hr" />
-                <label>Tables: {db.no_of_tables} found in the database</label>
-                <br />
-                <label>Size: {db.size}</label>
-                <br />
-                <label>Date Created: {db.date_created}</label>
+                <label>Size: {db.size} MB</label>
                 <br />
                 <a href="/table">
                   <div className="button view-more-button">View Tables</div>
@@ -164,7 +200,7 @@ class DatabasesView extends React.Component {
               </div>
             );
           })}
-          <div key={mock_data.length} className="col-4 custom-card">
+          <div key={this.state.length} className="col-3 custom-card">
             <label className="center-label" id="add-new-db-label">
               ADD A NEW DATABASE
             </label>

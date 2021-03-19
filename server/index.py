@@ -8,6 +8,8 @@ cors = CORS(app, resources={r"*": {"origins": "*"}})
 
 DEFAULT_SIZE = 255
 
+#### Helper Function/Routes
+
 @app.route('/', methods=["GET"])
 def running_server():
     return jsonify({'status': 200, 'response': 'Server is running ...'})
@@ -19,10 +21,10 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
     return response
 
-def User_Auth(user_auth):
-    return Connector(driver=user_auth['driver'],server=user_auth['server'], uid=user_auth['user_id'], password=user_auth['password'])
+def User_Auth(user_auth, autocommit = False):
+    return Connector(driver=user_auth['driver'],server=user_auth['server'], uid=user_auth['user_id'], password=user_auth['password'], autocommit=autocommit)
 
-#### DB Routes
+#### Server Routes
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -33,23 +35,57 @@ def login():
         return jsonify({'status': 400, 'response': str(e)})
     return jsonify({'status': 200, 'response': 'Valid Credentials'})
 
+#### DB Routes
+@app.route('/db/info', methods=['POST'])
+def get_dbs():
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth)
+
+        get_query = "SELECT DISTINCT db_name = DB_NAME(database_id), size = CONVERT(varchar, CAST(((SUM(Size)* 8) / 1024.0) AS DECIMAL(18,2)))"\
+                    + " FROM  sys.master_files"\
+                    + " WHERE database_id > 4"\
+                    + " GROUP BY GROUPING SETS ((DB_NAME(database_id)), (DB_NAME(database_id)))"\
+                    + " ORDER BY DB_NAME(database_id)"
+
+        connector.execute(get_query)
+
+        row_headers = [x[0] for x in connector.description()]
+
+        rows = connector.fetchall()
+        
+        result = []
+
+        for row in rows:
+            result.append(dict(zip(row_headers, row)))
+
+        return jsonify({'status': 200, 'response': result})
+
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
+    return
+
 @app.route('/db/create', methods=['POST'])
 def create_db():
-    connector = Connector()
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth, True)
 
-    db_name = request.json['db_name']
+        db_name = request.get_json()['db_name']
 
-    if connector.check_db(db_name):
-        return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' already exists!'})
-    
-    create_sql = "CREATE DATABASE " + "`" + db_name + "`" + ";"
+        if connector.check_db(db_name):
+            return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' already exists!'})
+        
+        create_sql = "CREATE DATABASE " + "[" + db_name + "]" + ";"
 
-    connector.execute(create_sql)
+        connector.execute(create_sql)
 
-    if connector.check_db(db_name):
-        return jsonify({'status': 200, 'response': 'Database named ' + db_name + ' successfully created!'})
-    else:
-        return jsonify({'status': 400, 'response': 'Unable to create database named ' + db_name + '!'})    
+        if connector.check_db(db_name):
+            return jsonify({'status': 200, 'response': 'Database named ' + db_name + ' successfully created!'})
+        else:
+            return jsonify({'status': 400, 'response': 'Unable to create database named ' + db_name + '!'})    
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
 
 @app.route('/db/delete', methods=['DELETE'])
 def delete_db():
