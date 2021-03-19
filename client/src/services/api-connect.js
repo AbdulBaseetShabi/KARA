@@ -2,7 +2,8 @@ import Global from "./global";
 
 function HTTPCalls(method, endpoint, data, callback) {
   const HTTP = new XMLHttpRequest();
-  HTTP.open(method, `${Global["API_URL"]}${endpoint}`);
+  const url = `${Global["API_URL"]}${endpoint}`;
+  HTTP.open(method, url);
   HTTP.setRequestHeader('Content-Type', 'application/json');
 
   HTTP.onreadystatechange = function () {

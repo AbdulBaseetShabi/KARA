@@ -164,10 +164,10 @@ class TableView extends React.Component {
           Tables in the <span id="db-name-selected">Trivia</span> Database
         </label>
         <hr className="header-hr" />
-        <div className="row">
+        <div className="row d-flex justify-content-center">
           {mock_data.map((table, index) => {
             return (
-              <div key={index} className="col-4 custom-card">
+              <div key={index} className="col-3 custom-card">
                 <label className="center-label db-name-label">
                   {table.table_name}
                 </label>
@@ -214,7 +214,7 @@ class TableView extends React.Component {
               </div>
             );
           })}
-          <div key={mock_data.length} className="col-4 custom-card">
+          <div key={mock_data.length} className="col-3 custom-card">
             <label className="center-label" id="add-new-db-label">
               ADD A NEW TABLE
             </label>

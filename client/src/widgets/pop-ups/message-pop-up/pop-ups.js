@@ -19,10 +19,7 @@ function PopUp(props) {
         <div
           id="popup-message"
           style={{
-            color:
-              props.modaltype === "error"
-                ? "#fffffe"
-                : "black"
+            color: props.modaltype === "error" ? "#fffffe" : "black",
           }}
         >
           {props.children}
@@ -30,7 +27,7 @@ function PopUp(props) {
         <label
           id="close-icon"
           onClick={() => {
-            props.closePopUp({});
+            props.closePopUp(props.modaltype === "success" ? "reload" : {});
           }}
         >
           Close <i className="fas fa-times"></i>

@@ -5,7 +5,9 @@ function AddDB(props) {
     return (
       <div className="modal-options">
         <div className="modal-options-content">
-          <label className="center-label page-label">{props.is_add_new_db ? "Add New Database" : "Change Database Name"}</label>
+          <label className="center-label page-label">
+            {props.is_add_new_db ? "Add New Database" : "Change Database Name"}
+          </label>
           <hr className="header-hr" />
           <label className="metadata-label center-label">
             Database Name{props.is_add_new_db ? "" : ": " + props.old_name}
@@ -34,7 +36,7 @@ function AddDB(props) {
                       if (props.is_add_new_db) {
                         props.createNewDatabase();
                       } else {
-                        props.changeDataBaseName(props.old_name);
+                        props.changeDataBaseName();
                       }
                     }
               }
