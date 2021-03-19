@@ -87,25 +87,28 @@ def create_db():
     except Exception as e:
         return jsonify({'status': 400, 'response': str(e)})
 
-@app.route('/db/delete', methods=['DELETE'])
+@app.route('/db/delete', methods=['POST'])
 def delete_db():
-    connector = Connector()
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth, True)
 
-    db_name = request.json['db_name']
+        db_name = request.get_json()['db_name']
 
-    if connector.check_db(db_name):
-        drop_sql = "DROP DATABASE " + "`" + db_name + "`" + ";"
+        if connector.check_db(db_name):
+            drop_sql = "DROP DATABASE " + "[" + db_name + "]" + ";"
 
-        connector.execute(drop_sql)
+            connector.execute(drop_sql)
 
-        if not connector.check_db(db_name):
-            return jsonify({'status': 200, 'response': 'Database named ' + db_name + ' successfully deleted!'})
+            if not connector.check_db(db_name):
+                return jsonify({'status': 200, 'response': 'Database named ' + db_name + ' successfully deleted!'})
+            else:
+                return jsonify({'status': 400, 'response': 'Unable to delete database named ' + db_name + '!'})
         else:
-            return jsonify({'status': 400, 'response': 'Unable to delete database named ' + db_name + '!'})
-    else:
-        return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})
-
-
+            return jsonify({'status': 404, 'response': 'Database named ' + db_name + ' does not exist!'})
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
+        
 #### Table Routes
 
 @app.route('/table/create', methods=['POST'])
