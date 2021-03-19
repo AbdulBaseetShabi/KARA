@@ -102,13 +102,34 @@ class DatabasesView extends React.Component {
   }
 
   changeDataBaseName() {
-    console.log(this.modified_db);
     if (this.modified_db.current_name === this.modified_db.previous_name) {
       this.updatePopUp({ type: "error", message: "Using this same name" });
     } else if (this.modified_db.current_name.length === 0) {
       this.updatePopUp({ type: "success", message: "No name specified" });
     } else {
       this.setState({ updating_db_name: true });
+      HTTPCalls(
+        "POST",
+        "/db/rename",
+        {
+          user_credential: JSON.parse(
+            sessionStorage.getItem(Global["APP_KEY"])
+          ),
+          db_name: this.modified_db,
+        },
+        (res) => {
+          this.setState({
+            response: {
+              type:
+                res["status"] === 400
+                  ? "error"
+                  : "success",
+              message: res["response"],
+            },
+            updating_db_name: false,
+          });
+        }
+      );
     }
   }
 
@@ -193,6 +214,7 @@ class DatabasesView extends React.Component {
         <hr className="header-hr" />
         <div className="row d-flex justify-content-center">
           {this.state.databases.map((db, index) => {
+            let url = `/table/view?db=${db.db_name}`;
             return (
               <div key={index} className="col-3 custom-card">
                 <label className="center-label db-name-label">
@@ -201,7 +223,7 @@ class DatabasesView extends React.Component {
                 <hr className="header-hr" />
                 <label>Size: {db.size} MB</label>
                 <br />
-                <a href="/table">
+                <a href={url}>
                   <div className="button view-more-button">View Tables</div>
                 </a>
                 <div

@@ -108,7 +108,33 @@ def delete_db():
             return jsonify({'status': 404, 'response': 'Database named ' + db_name + ' does not exist!'})
     except Exception as e:
         return jsonify({'status': 400, 'response': str(e)})
-        
+
+@app.route('/db/rename', methods=['POST'])
+def db_rename():
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth, True)
+
+        original_db_name = request.get_json()['db_name']['previous_name']
+        new_db_name = request.get_json()['db_name']['current_name']
+
+        if connector.check_db(original_db_name):
+            if not connector.check_db(new_db_name):
+                drop_sql = "ALTER DATABASE " + "[" + original_db_name + "]" + " MODIFY NAME = " + "[" + new_db_name + "]"
+
+                connector.execute(drop_sql)
+
+                if connector.check_db(new_db_name):
+                    return jsonify({'status': 200, 'response': 'Database ' + original_db_name + ' successfully renamed to ' + new_db_name + '!'})
+                else:
+                    return jsonify({'status': 400, 'response': 'Unable to rename database named ' + original_db_name + '!'})
+            else:
+                return jsonify({'status': 400, 'response': 'A database in you server already has the name ' + new_db_name})                
+        else:
+            return jsonify({'status': 400, 'response': 'Database named ' + original_db_name + ' does not exist!'})
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
+
 #### Table Routes
 
 @app.route('/table/create', methods=['POST'])
