@@ -16,6 +16,11 @@ const mock_data = [
 class TableView extends React.Component {
   constructor(props) {
     super(props);
+    const urlParams = new URLSearchParams(window.location.search);
+    const db = urlParams.get('db');
+    if (db === null) {
+      window.location.replace('/databases');
+    }
     this.state = {
       is_loading: false,
       is_loading_add_new_table: false,
@@ -24,7 +29,7 @@ class TableView extends React.Component {
       show_add_new_table: false,
       show_change_table_name_view: false,
     };
-
+    
     this.table_name_to_change = {
       from: "",
       to: "",
@@ -38,6 +43,10 @@ class TableView extends React.Component {
     this.addTable = this.addTable.bind(this);
     this.delete_table_or_all_entries = false;
     this.table_to_delete = "";
+  }
+
+  componentDidMount(){
+    
   }
 
   changeDeleteModalState(state, table_to_delete, delete_table_or_all_entries) {
