@@ -102,10 +102,10 @@ class DatabasesView extends React.Component {
   }
 
   changeDataBaseName() {
-    if (this.modified_db.current_name === this.modified_db.previous_name) {
-      this.updatePopUp({ type: "error", message: "Using this same name" });
+    if (this.modified_db.current_name.toLowerCase() === this.modified_db.previous_name.toLowerCase()) {
+      this.updatePopUp({ type: "warning", message: "Using this same name" });
     } else if (this.modified_db.current_name.length === 0) {
-      this.updatePopUp({ type: "success", message: "No name specified" });
+      this.updatePopUp({ type: "warning", message: "No name specified" });
     } else {
       this.setState({ updating_db_name: true });
       HTTPCalls(
