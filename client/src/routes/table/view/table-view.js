@@ -244,13 +244,14 @@ class TableView extends React.Component {
           loading={this.state.is_loading}
         />
         <label className="center-label page-label">
-          Tables in the <span id="db-name-selected">Trivia</span> Database
+          Tables in the <span id="db-name-selected">{this.db}</span> Database
         </label>
         <hr className="header-hr" />
         <div className="row d-flex justify-content-center">
           {this.state.tables.map((table, index) => {
             let last_modified_date = new Date(table.modify_date);
             let date_created = new Date(table.create_date);
+            let url = `/data?db=${this.db}&table=${table.table_name}`
             return (
               <div key={index} className="col-3 custom-card">
                 <label className="center-label db-name-label">
@@ -262,7 +263,7 @@ class TableView extends React.Component {
                 <label className="center-label">Date Created</label>
                 <label className="center-label">{date_created.toLocaleDateString() + " " + date_created.toLocaleTimeString()}</label>
                 <br />
-                <a href="/data">
+                <a href={url}>
                   <div className="button view-more-button">View Entries</div>
                 </a>
                 <div

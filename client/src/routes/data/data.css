@@ -23,6 +23,10 @@ thead > tr > th{
     color: #fffffe;
 }
 
+thead > tr > th:not(:first-child){
+    border-left: 2px solid #fffffe;
+}
+
 tbody > tr:hover{
     color: #fffffe;
     background-color:#1A3263;
