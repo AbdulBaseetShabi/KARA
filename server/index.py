@@ -158,7 +158,7 @@ def get_tables():
 
             return jsonify({'status': 200, 'response': result})
         else:
-            jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})
+            return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})
     except Exception as e:
         return jsonify({'status': 400, 'response': str(e)})
 
@@ -412,7 +412,7 @@ def get_table_entries():
                 return jsonify({'status': 200, 'response': result, 'row_headers': row_headers}) 
             return jsonify({'status': 200, 'response': result})
         else:
-                        return jsonify({'status': 400, 'response': 'Table in [' + db_name + '].' + table_name + ' does not exist!'})
+            return jsonify({'status': 400, 'response': '[' + db_name + '].' + table_name + ' does not exist!'})
     except Exception as e:
         return jsonify({'status': 400, 'response': str(e)})
 
