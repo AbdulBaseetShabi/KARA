@@ -58,4 +58,15 @@ class Connector:
             if table.lower() == name.lower():
                 return True
 
-        return False      
+        return False  
+
+    def has_entries(self, db, name):
+        use_db = "USE " + "[" + db + "];"
+
+        self._cursor.execute(use_db)
+
+        self._cursor.execute("SELECT * FROM " + name)
+        
+        entries = self._cursor.fetchall()
+
+        return len(entries) != 0
