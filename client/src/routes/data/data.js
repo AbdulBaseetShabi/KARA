@@ -4,44 +4,15 @@ import PopUp from "../../widgets/pop-ups/message-pop-up/pop-ups";
 import RowOptions from "../../widgets/pop-ups//row-option/row-option";
 import DeletePopUp from "../../widgets/pop-ups/delete-pop-up/delete-pop-up";
 import AddNewRow from "./add-new-row";
-
-const mock_data = [
-  {
-    id: 1,
-    first_name: "Abdul",
-    last_name: "Shabi",
-    date_of_birth: new Date().toLocaleDateString(),
-    married: true,
-  },
-  {
-    id: 2,
-    first_name: "Test",
-    last_name: "User",
-    date_of_birth: new Date().toLocaleDateString(),
-    married: false,
-  },
-  {
-    id: 3,
-    first_name: "Trink",
-    last_name: "Trank",
-    date_of_birth: new Date().toLocaleDateString(),
-    married: true,
-  },
-  {
-    id: 4,
-    first_name: "Ting",
-    last_name: "Tang",
-    date_of_birth: new Date().toLocaleDateString(),
-    married: false,
-  },
-];
+import HTTPCalls from "../../services/api-connect";
+import Global from "../../services/global";
 
 function convertObjectToArray(data) {
   let keys = Object.keys(data[0]);
   let array_data = data.map((a) => {
     let array = [];
     for (let i = 0; i < keys.length; i++) {
-      array.push(a[keys[i]].toString());
+      array.push(a[keys[i]]);
     }
     return array;
   });
@@ -56,9 +27,20 @@ function convertObjectToArray(data) {
 class Data extends React.Component {
   constructor(props) {
     super(props);
+    const urlParams = new URLSearchParams(window.location.search);
+    this.db = urlParams.get("db");
+    this.table_name = urlParams.get("table");
+
+    if (this.db === null) {
+      window.location.replace("/databases");
+    } else if (this.table_name === null) {
+      window.location.replace(`/table/view?db=${this.db}`);
+    }
+
     this.state = {
       show_row_option: false,
       row_options: [],
+      entries: [],
       response: {},
       is_loading: false,
       show_delete_prompt: false,
@@ -80,6 +62,29 @@ class Data extends React.Component {
     this.data = [];
     this.edit_row_number = null;
     this.row_to_delete = null;
+  }
+
+  componentDidMount(){
+    HTTPCalls(
+      "POST",
+      "/table/entries",
+      {
+        user_credential: JSON.parse(sessionStorage.getItem(Global["APP_KEY"])),
+        db_name: this.db,
+        table_name: this.table_name
+      },
+      (res) => {
+        if (res["status"] === 200) {
+          const response = res["response"];
+          let data = response.length > 0 ? convertObjectToArray(res["response"]) : [];
+          this.keys = response.length > 0 ? data["keys"] : res["row_headers"];
+          this.data = response.length > 0 ? data["data"] : [];
+          this.setState({ entries: res["response"] });
+        } else {
+          this.updatePopUp({ type: "error", message: res["response"] });
+        }
+      }
+    );
   }
 
   shouldShowRowOptions(row, boolean, edit_row_number) {
@@ -154,10 +159,6 @@ class Data extends React.Component {
   }
 
   render() {
-    let data = convertObjectToArray(mock_data);
-    this.keys = data["keys"];
-    this.data = data["data"];
-
     return (
       <div id="data-container">
         <RowOptions
@@ -192,8 +193,11 @@ class Data extends React.Component {
           {this.state.response.message}
         </PopUp>
         <label className="center-label page-label">
-          Data in the <span id="db-name-selected">Trivia</span> Table in the{" "}
-          <span id="db-name-selected">Trivia</span> database
+          <label className="center-label page-label">
+            <span id="db-name-selected">{this.db}</span> Database{" "}
+          </label>
+          Entries in the <span id="db-name-selected">{this.table_name}</span>{" "}
+          Table
         </label>
         <hr className="header-hr" />
         <table>
@@ -214,7 +218,12 @@ class Data extends React.Component {
                   }}
                 >
                   {row.map((row_data, index) => {
-                    return <td key={index}>{row_data}</td>;
+                    if (row_data === null) {
+                      return <td key={index}>NULL</td>;
+                    }else{
+                      let modified_row_data = row_data.toString().trim()
+                      return <td key={index}>{modified_row_data.length > 0 ? modified_row_data : "Empty String"}</td>;
+                    }
                   })}
                 </tr>
               );

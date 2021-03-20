@@ -48,10 +48,14 @@ function RowOptions(props) {
             </thead>
             <tbody>
               {props.row_options.map((row_option, index) => {
+                let modified_row_option = row_option === null ? "NULL" : row_option;
+                modified_row_option = modified_row_option.toString().trim();
+                modified_row_option = modified_row_option.length > 0 ? modified_row_option : "Empty String";
+                
                 return (
                   <tr key={index}>
                     <td>{props.keys[index]}</td>
-                    <td>{row_option}</td>
+                    <td>{modified_row_option}</td>
                     <td>
                       <input
                         type="text"

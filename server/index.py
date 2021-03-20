@@ -143,7 +143,7 @@ def get_tables():
 
         if connector.check_db(db_name):
             get_query = "SELECT name as table_name, create_date, modify_date"\
-                + f" FROM [{db_name}].sys.tables"
+                + f" FROM [" + db_name + "].sys.tables"
 
             connector.execute(get_query)
 
@@ -384,6 +384,37 @@ def find_row():
             return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' does not exist in the database named ' + db_name + '!'})
     else:
        return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})    
+
+@app.route('/table/entries', methods=['POST'])
+def get_table_entries():
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth)
+
+        db_name = request.get_json()['db_name']
+        table_name = request.get_json()['table_name']
+
+        if connector.check_db(db_name) and connector.check_table(db_name, table_name):
+            get_query = "SELECT * FROM " + "[" + db_name + "].[dbo].[" + table_name + "]"
+            
+            connector.execute(get_query)
+
+            row_headers = [x[0] for x in connector.description()]
+
+            rows = connector.fetchall()
+
+            result = []
+            
+            for row in rows:
+                result.append(dict(zip(row_headers, row)))
+            
+            if len(result) == 0:
+                return jsonify({'status': 200, 'response': result, 'row_headers': row_headers}) 
+            return jsonify({'status': 200, 'response': result})
+        else:
+                        return jsonify({'status': 400, 'response': 'Table in [' + db_name + '].' + table_name + ' does not exist!'})
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True)
