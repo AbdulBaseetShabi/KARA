@@ -416,6 +416,32 @@ def get_table_entries():
     except Exception as e:
         return jsonify({'status': 400, 'response': str(e)})
 
+@app.route('/entries/delete', methods=['POST'])
+def delete_all_table_entries():
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth, True)
+
+        db_name = request.get_json()['db_name']
+        table_name = request.get_json()['table_name']
+
+        if connector.check_db(db_name):
+            if connector.check_table(db_name, table_name):
+                delete_entries_sql = "DELETE FROM [" + db_name + "].[dbo]." + "[" + table_name + "];"
+
+                connector.execute(delete_entries_sql)
+
+                if not connector.has_entries(db_name, table_name):
+                    return jsonify({'status': 200, 'response': 'Successfully deleted entries in table named ' + table_name + ', in the database named ' + db_name})
+                else:
+                    return jsonify({'status': 400, 'response': 'Unable to delete the entries in the table named ' + table_name + '!'})
+            else:
+                return jsonify({'status': 404, 'response': 'Table named ' + table_name + ' does not exist in the database named ' + db_name + '!'})
+        else:
+            return jsonify({'status': 404, 'response': 'Database named ' + db_name + ' does not exist!'})
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
+
 if __name__ == '__main__':
     app.run(debug=True)
     # app.run()

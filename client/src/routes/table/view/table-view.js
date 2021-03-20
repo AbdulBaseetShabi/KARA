@@ -30,7 +30,7 @@ class TableView extends React.Component {
       to: "",
     };
     this.deleteTable = this.deleteTable.bind(this);
-    this.deleteDataInTable = this.deleteDataInTable.bind(this);
+    this.deleteEntries = this.deleteEntries.bind(this);
     this.changeDeleteModalState = this.changeDeleteModalState.bind(this);
     this.changeAddTableModalState = this.changeAddTableModalState.bind(this);
     this.changeEditTableNameModalState = this.changeEditTableNameModalState.bind(this);
@@ -109,9 +109,32 @@ class TableView extends React.Component {
     this.setState({ is_loading_add_new_table: true });
   }
 
-  deleteDataInTable() {
+  deleteEntries() {
     console.log("Data in " + this.table_to_delete);
     this.setState({ is_loading: true });
+    HTTPCalls(
+      "POST",
+      "/entries/delete",
+      {
+        user_credential: JSON.parse(sessionStorage.getItem(Global["APP_KEY"])),
+        db_name: this.db,
+        table_name: this.table_to_delete
+      },
+      (res) => {
+        this.setState({
+          response: {
+            type:
+              res["status"] === 400
+                ? "error"
+                : res["status"] === 200
+                ? "success"
+                : "warning",
+            message: res["response"],
+          },
+          is_loading: false,
+        });
+      }
+    );
   }
 
   controlChangeTableName(event) {
@@ -236,7 +259,7 @@ class TableView extends React.Component {
           deleteData={
             this.delete_table_or_all_entries
               ? this.deleteTable
-              : this.deleteDataInTable
+              : this.deleteEntries
           }
           delete_name={
             this.delete_table_or_all_entries ? "table" : "table's entries"
