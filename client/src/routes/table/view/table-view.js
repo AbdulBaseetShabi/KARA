@@ -88,8 +88,30 @@ class TableView extends React.Component {
   }
 
   deleteTable() {
-    console.log(this.table_to_delete);
     this.setState({ is_loading: true });
+    HTTPCalls(
+      "POST",
+      "/table/delete",
+      {
+        user_credential: JSON.parse(sessionStorage.getItem(Global["APP_KEY"])),
+        db_name: this.db,
+        table_name: this.table_to_delete
+      },
+      (res) => {
+        this.setState({
+          response: {
+            type:
+              res["status"] === 400
+                ? "error"
+                : res["status"] === 200
+                ? "success"
+                : "warning",
+            message: res["response"],
+          },
+          is_loading: false,
+        });
+      }
+    );
   }
 
   addTable(table_data) {

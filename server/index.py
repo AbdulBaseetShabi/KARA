@@ -150,7 +150,7 @@ def get_tables():
             row_headers = [x[0] for x in connector.description()]
 
             rows = connector.fetchall()
-            print(rows)
+
             result = []
 
             for row in rows:
@@ -166,7 +166,7 @@ def get_tables():
 def rename_table():
     try:
         user_auth = request.get_json()["user_credential"]
-        connector = User_Auth(user_auth, True)
+        connector = User_Auth(user_auth)
 
         db_name = request.get_json()["db_name"]
         original_table_name = request.get_json()['table_name']['from']
@@ -230,31 +230,31 @@ def create_table():
     else:
         return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})
 
-@app.route('/table/delete', methods=['DELETE'])
+@app.route('/table/delete', methods=['POST'])
 def delete_table():
-    connector = Connector()
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth, True)
 
-    db_name = request.json['db_name']
-    table_name = request.json['table_name']
+        db_name = request.get_json()['db_name']
+        table_name = request.get_json()['table_name']
 
-    if connector.check_db(db_name):
-        if connector.check_table(db_name, table_name):
-            drop_sql = "DROP TABLE " + "`" + table_name + "`;"
+        if connector.check_db(db_name):
+            if connector.check_table(db_name, table_name):
+                drop_sql = "DROP TABLE [" + db_name + "].[dbo]." + "[" + table_name + "];"
 
-            use_db = "USE " + "`" + db_name + "`"
+                connector.execute(drop_sql)
 
-            connector.execute(use_db)
-
-            connector.execute(drop_sql)
-
-            if not connector.check_table(db_name, table_name):
-                return jsonify({'status': 200, 'response': 'Successfully deleted table named ' + table_name + ' in the database named ' + db_name})
+                if not connector.check_table(db_name, table_name):
+                    return jsonify({'status': 200, 'response': 'Successfully deleted table named ' + table_name + ' in the database named ' + db_name})
+                else:
+                    return jsonify({'status': 400, 'response': 'Unable to delete table named ' + table_name + '!'})
             else:
-                return jsonify({'status': 400, 'response': 'Unable to delete table named ' + table_name + '!'})
+                return jsonify({'status': 404, 'response': 'Table named ' + table_name + ' does not exist in the database named ' + db_name + '!'})
         else:
-            return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' does not exist in the database named ' + db_name + '!'})
-    else:
-        return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})
+            return jsonify({'status': 404, 'response': 'Database named ' + db_name + ' does not exist!'})
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
 
 @app.route('/table/add', methods=['POST'])
 def add_row():
