@@ -6,16 +6,6 @@ import PopUp from "../../../widgets/pop-ups/message-pop-up/pop-ups";
 import AddNewTable from "./add-new-table";
 import "./table-view.css";
 
-const mock_data = [
-  {
-    table_name: "Tracking",
-    size: "1 GB",
-    no_of_colums: 5,
-    no_of_entries: 500,
-    date_created: new Date().toLocaleDateString(),
-  },
-];
-
 class TableView extends React.Component {
   constructor(props) {
     super(props);
@@ -305,7 +295,7 @@ class TableView extends React.Component {
               </div>
             );
           })}
-          <div key={mock_data.length} className="col-3 custom-card">
+          <div key={this.state.tables.length} className="col-3 custom-card">
             <label className="center-label" id="add-new-db-label">
               ADD A NEW TABLE
             </label>
