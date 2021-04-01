@@ -5,19 +5,27 @@ function Column(props) {
   return (
     <div className="column-to-edit">
       <div className="row">
-        <div className="col">
+        <div
+          className={
+            props.column.type.toUpperCase() === "VARCHAR" ? "col-4" : "col"
+          }
+        >
           <label className="center-label">Column Name: </label>
           <input
-            name="column_name"
+            name="name"
             type="text"
             data-key={props.index}
-            checked={props.column.column_name}
-            value={props.column.column_name}
+            checked={props.column.name}
+            value={props.column.name}
             onChange={props.handleInputChange}
           ></input>
         </div>
-        <div className="col">
-          <label className="center-label">Allows Null</label>
+        <div
+          className={
+            props.column.type.toUpperCase() === "VARCHAR" ? "col-2" : "col"
+          }
+        >
+          <label className="center-label">Null</label>
           <input
             name="allows_null"
             type="checkbox"
@@ -26,10 +34,14 @@ function Column(props) {
             onChange={props.handleInputChange}
           ></input>
         </div>
-        <div className="col">
+        <div
+          className={
+            props.column.type.toUpperCase() === "VARCHAR" ? "col-3" : "col"
+          }
+        >
           <label className="center-label">Data Type</label>
           <select
-            name="data_type"
+            name="type"
             data-key={props.index}
             className="center-block"
             onChange={props.handleInputChange}
@@ -44,6 +56,20 @@ function Column(props) {
             })}
           </select>
         </div>
+        {props.column.type.toUpperCase() === "VARCHAR" ? (
+          <div className="col-3">
+            <label className="center-label">Size</label>
+            <input
+              name="size"
+              type="number"
+              data-key={props.index}
+              min="1"
+              max="255"
+              value={props.column.size}
+              onChange={props.handleInputChange}
+            ></input>
+          </div>
+        ) : null}
       </div>
       <div>
         <label className="center-label">Key Constraints</label>
