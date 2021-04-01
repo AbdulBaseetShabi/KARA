@@ -194,41 +194,62 @@ def rename_table():
 
 @app.route('/table/create', methods=['POST'])
 def create_table():
-    connector = Connector()
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth, True)
 
-    db_name = request.json['db_name']
-    table_name = request.json['table_name']
-    columns = request.json['columns']
+        db_name = request.get_json()['db_name']
+        table_name = request.get_json()['table_name']
+        columns = request.get_json()['columns']
 
-    if connector.check_db(db_name):
-        if connector.check_table(db_name, table_name):
-            return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' already exists!'})
+        if connector.check_db(db_name):
+            if connector.check_table(db_name, table_name):
+                return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' already exists!'})
+        
+            create_sql = "CREATE TABLE " + "[" + table_name + "] ("
 
-        create_sql = "CREATE TABLE " + "`" + table_name + "` ("
+            for index, column in enumerate(columns):
+                if column['type'] == "VARCHAR":
+                    create_sql += column['name'] + " " + column['type'] + "(" + str(column['size']) + ")"
+                else:
+                    create_sql += column['name'] + " " +column['type']
+                
+                if column['allows_null'] == False:
+                    create_sql += " NOT NULL"
 
-        for index, column in enumerate(columns):
-            if column['type'] == "VARCHAR":
-                create_sql += column['name'] + " " + column['type'] + "(" + column['size'] + ")"
+                if column['constraints']['unique_key']['is_unique_key'] == True:
+                    create_sql += " UNIQUE"
+                
+                if column['constraints']['primary_key']['is_primary_key'] == True:
+                    create_sql += ", PRIMARY KEY (" + column['name'] + ")"
+
+                if column['constraints']['foreign_key']['is_foreign_key'] == True:
+                    reference_table_name = column['constraints']['foreign_key']['reference_table_name']
+                    reference_column_name = column['constraints']['foreign_key']['reference_column_name']
+                    if connector.check_table(db_name, reference_table_name):
+                        create_sql += ", FOREIGN KEY (" + column['name'] + ") REFERENCES " + reference_table_name + "(" + reference_column_name + ")"
+                    else:
+                        return jsonify({'status': 400, 'response': 'There is no Table named [' + reference_table_name + ']' + 'with Column named [' +  reference_column_name +'] in the Database named [' + db_name + ']!'})
+                if index != len(columns) - 1:
+                    create_sql += ", "
+
+            create_sql += ");"
+
+            print(create_sql)
+            use_db = "USE " + "[" + db_name + "]"
+
+            connector.execute(use_db)
+
+            connector.execute(create_sql)
+
+            if connector.check_table(db_name, table_name):
+                return jsonify({'status': 200, 'response': 'Successfully created table named ' + table_name + ' in the database named ' + db_name})
             else:
-                create_sql += column['name'] + " " +column['type']
-
-            if index != len(columns) - 1:
-                create_sql += ", "
-
-        create_sql += ");"
-
-        use_db = "USE " + "`" + db_name + "`"
-
-        connector.execute(use_db)
-
-        connector.execute(create_sql)
-
-        if connector.check_table(db_name, table_name):
-            return jsonify({'status': 200, 'response': 'Successfully created table named ' + table_name + ' in the database named ' + db_name})
+                return jsonify({'status': 400, 'response': 'Unable to create table named ' + table_name + '!'})
         else:
-            return jsonify({'status': 400, 'response': 'Unable to create table named ' + table_name + '!'})
-    else:
-        return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})
+            return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
 
 @app.route('/table/delete', methods=['POST'])
 def delete_table():
