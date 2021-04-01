@@ -117,10 +117,42 @@ class Data extends React.Component {
 
   deleteRow() {
     this.setState({ is_loading: true });
+    let row = [];
+    for (let i = 0; i < this.row_to_delete.length; i++) {
+      row.push({
+        column: this.keys[i],
+        value: this.row_to_delete[i]
+      })
+    }
+
+    console.log(row);
+    HTTPCalls(
+      "POST",
+      "/table/remove",
+      {
+        user_credential: JSON.parse(
+          sessionStorage.getItem(Global["APP_KEY"])
+        ),
+        db_name: this.db,
+        table_name: this.table_name,
+        queries: row
+      },
+      (res) => {
+        this.setState({
+          response: {
+            type:
+              res["status"] === 400
+                ? "error"
+                : "success",
+            message: res["response"],
+          },
+          is_loading: false,
+        });
+      }
+    );
   }
 
   changeDeleteModalState(state) {
-    console.log(this.row_to_delete);
     this.setState({ show_delete_prompt: state });
   }
 
@@ -145,7 +177,11 @@ class Data extends React.Component {
   }
 
   updatePopUp(response) {
-    this.setState({ response: response });
+    if (response === "reload") {
+      window.location.reload();
+    } else {
+      this.setState({ response: response });
+    }
   }
 
   shouldShowAddRow(state) {

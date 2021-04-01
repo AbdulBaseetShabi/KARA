@@ -319,38 +319,51 @@ def add_row():
     else:
        return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'}) 
 
-@app.route('/table/remove', methods=['DELETE'])
+@app.route('/table/remove', methods=['POST'])
 def delete_row():
-    connector = Connector()
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth, True)
 
-    db_name = request.json['db_name']
-    table_name = request.json['table_name']
-    queries = request.json['queries']
+        db_name = request.get_json()['db_name']
+        table_name = request.get_json()['table_name']
+        queries = request.get_json()['queries']
 
-    if connector.check_db(db_name):
-        if connector.check_table(db_name, table_name):
-            use_db = "USE " + "`" + db_name + "`"
-            connector.execute(use_db)
+        if connector.check_db(db_name):
+            if connector.check_table(db_name, table_name):
+                use_db = "USE " + "[" + db_name + "]"
+                connector.execute(use_db)
 
-            delete_sql = "DELETE FROM " + "`" + table_name + "`" + " WHERE "
+                delete_sql = "DELETE TOP(1) FROM " + "[dbo].[" + table_name + "]" + " WHERE "
 
-            for (index, query) in enumerate(queries):
-                if index != len(queries) - 1:
-                    delete_sql += query['column'] + " " + query['relation'] + " '" + query['value'] + "' AND "
-                else:
-                    delete_sql += query['column'] + " " + query['relation'] + " '" + query['value'] + "'"
+                for (index, query) in enumerate(queries):
+                    value = query['value']
+                    if index != len(queries) - 1:
+                        if value is None:
+                            delete_sql += query['column'] + " IS NULL AND "
+                        else:
+                            delete_sql += query['column'] + " = {} AND ".format(value)
+                    else:
+                        if value is None:
+                            delete_sql += query['column'] + " IS NULL"
+                        else:    
+                           delete_sql += query['column'] + " = {}".format(value)
 
-            delete_sql += ";"
+                delete_sql += ";"
+                
+                print(delete_sql)
+                connector.execute(delete_sql)
+                
+                connector.commit()
 
-            connector.execute(delete_sql)
-            
-            connector.commit()
-
-            return jsonify({'status': 200, 'response': str(connector.rowcount()) + ' row(s) deleted from table named ' + table_name + ' in the database named ' + db_name})
+                return jsonify({'status': 200, 'response': str(connector.rowcount()) + ' row(s) deleted from table named ' + table_name + ' in the database named ' + db_name})
+            else:
+                return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' does not exist in the database named ' + db_name + '!'})
         else:
-            return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' does not exist in the database named ' + db_name + '!'})
-    else:
-       return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'}) 
+            return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'}) 
+    except Exception as e:
+        print(e)
+        return jsonify({'status': 400, 'response': str(e)})
 
 @app.route('/table/find', methods=['GET'])
 def find_row():
