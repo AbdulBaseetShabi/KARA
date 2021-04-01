@@ -3,9 +3,10 @@ import Column from "../../../widgets/column/column";
 
 const data_type = ["int", "boolean", "varchar"];
 const column_representation = {
-  column_name: "",
+  name: "",
   allows_null: false,
-  data_type: data_type[0].toUpperCase(),
+  type: data_type[0].toUpperCase(),
+  size: 1,
   constraints: {
     primary_key: {
       is_primary_key: false,
@@ -39,6 +40,7 @@ class AddNewTable extends React.Component {
     this.removeConstraint = this.removeConstraint.bind(this);
     this.addConstraint = this.addConstraint.bind(this);
     this.deleteColumn = this.deleteColumn.bind(this);
+    this.table_name = "";
   }
 
   addNewColumn() {
@@ -59,7 +61,7 @@ class AddNewTable extends React.Component {
       columns = columns.filter((item, i) => {
         return i !== index;
       });
-      console.log(columns);
+      
       return this.updateColumn(columns);
     });
   }
@@ -99,9 +101,21 @@ class AddNewTable extends React.Component {
         }
         updated_column_data[index]["constraints"] = constraints;
       } else {
-        updated_column_data[index][key] = value;
+        if (key === "size") {
+          let size = parseInt(value);
+          if(!isNaN(size)) {
+            if (size > 255) {
+              size = 255;
+            } else if (size < 1) {
+              size = 1;
+            }
+            updated_column_data[index][key] = size;
+          }
+        } else {
+          updated_column_data[index][key] = value;
+        }
       }
-      console.log(updated_column_data);
+      
       return this.updateColumn(updated_column_data);
     });
   }
@@ -166,6 +180,10 @@ class AddNewTable extends React.Component {
     };
   }
 
+  updateTableName(value) {
+    this.table_name = value;
+  }
+
   render() {
     if (this.props.show) {
       return (
@@ -174,7 +192,10 @@ class AddNewTable extends React.Component {
             <label className="center-label page-label">Add New Table</label>
             <hr className="header-hr" />
             <label className="center-label">Table Name</label>
-            <input type="text"></input>
+            <input
+              type="text"
+              onChange={(e) => this.updateTableName(e.target.value)}
+            ></input>
             <div>
               {this.state.data.table_data.columns.map((column, index) => {
                 return (
@@ -207,7 +228,10 @@ class AddNewTable extends React.Component {
                   this.props.loading
                     ? null
                     : () => {
-                        this.props.addTable();
+                        this.props.addTable(
+                          this.table_name,
+                          this.state.data.table_data.columns
+                        );
                       }
                 }
               >
