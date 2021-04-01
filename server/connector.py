@@ -60,6 +60,22 @@ class Connector:
 
         return False  
 
+    def check_column(self, db, table, name):
+        use_db = "USE " + "[" + db + "];"
+
+        self._cursor.execute(use_db)
+        try:
+            get_query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + table + "'"
+            self._cursor.execute(get_query)
+
+            for column_name in self._cursor:
+                print(column_name)
+                if column_name.lower() == name.lower():
+                    return True
+        except Exception as e:
+            return False
+        return False
+
     def has_entries(self, db, name):
         use_db = "USE " + "[" + db + "];"
 
