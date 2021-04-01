@@ -10,9 +10,9 @@ class TableView extends React.Component {
   constructor(props) {
     super(props);
     const urlParams = new URLSearchParams(window.location.search);
-    this.db = urlParams.get('db');
+    this.db = urlParams.get("db");
     if (this.db === null) {
-      window.location.replace('/databases');
+      window.location.replace("/databases");
     }
     this.state = {
       is_loading: false,
@@ -22,9 +22,9 @@ class TableView extends React.Component {
       show_add_new_table: false,
       show_change_table_name_view: false,
       response: {},
-      tables: []
+      tables: [],
     };
-    
+
     this.table_name_to_change = {
       from: "",
       to: "",
@@ -33,7 +33,9 @@ class TableView extends React.Component {
     this.deleteEntries = this.deleteEntries.bind(this);
     this.changeDeleteModalState = this.changeDeleteModalState.bind(this);
     this.changeAddTableModalState = this.changeAddTableModalState.bind(this);
-    this.changeEditTableNameModalState = this.changeEditTableNameModalState.bind(this);
+    this.changeEditTableNameModalState = this.changeEditTableNameModalState.bind(
+      this
+    );
     this.controlChangeTableName = this.controlChangeTableName.bind(this);
     this.addTable = this.addTable.bind(this);
     this.updatePopUp = this.updatePopUp.bind(this);
@@ -41,13 +43,13 @@ class TableView extends React.Component {
     this.table_to_delete = "";
   }
 
-  componentDidMount(){
+  componentDidMount() {
     HTTPCalls(
       "POST",
       "/table/info",
       {
         user_credential: JSON.parse(sessionStorage.getItem(Global["APP_KEY"])),
-        db_name: this.db
+        db_name: this.db,
       },
       (res) => {
         if (res["status"] === 200) {
@@ -85,7 +87,7 @@ class TableView extends React.Component {
       {
         user_credential: JSON.parse(sessionStorage.getItem(Global["APP_KEY"])),
         db_name: this.db,
-        table_name: this.table_to_delete
+        table_name: this.table_to_delete,
       },
       (res) => {
         this.setState({
@@ -104,9 +106,33 @@ class TableView extends React.Component {
     );
   }
 
-  addTable(table_data) {
+  addTable(table_name, table_data) {
+    console.log(table_name);
     console.log(table_data);
+    table_data = table_data.filter((data)=>{
+      return data.name.trim().length !== 0;
+    })
+
     this.setState({ is_loading_add_new_table: true });
+    HTTPCalls(
+      "POST",
+      "/table/create",
+      {
+        user_credential: JSON.parse(sessionStorage.getItem(Global["APP_KEY"])),
+        db_name: this.db,
+        table_name: table_name,
+        columns: table_data,
+      },
+      (res) => {
+        this.setState({
+          response: {
+            type: res["status"] === 400 ? "error" : "success",
+            message: res["response"],
+          },
+          is_loading_add_new_table: false,
+        });
+      }
+    );
   }
 
   deleteEntries() {
@@ -118,7 +144,7 @@ class TableView extends React.Component {
       {
         user_credential: JSON.parse(sessionStorage.getItem(Global["APP_KEY"])),
         db_name: this.db,
-        table_name: this.table_to_delete
+        table_name: this.table_to_delete,
       },
       (res) => {
         this.setState({
@@ -145,9 +171,12 @@ class TableView extends React.Component {
     console.log(this.table_name_to_change);
     if (this.table_name_to_change.to.length === 0) {
       this.updatePopUp({ type: "warning", message: "No name specified" });
-    }else if(this.table_name_to_change.to.toLowerCase() === this.table_name_to_change.from.toLowerCase()){
+    } else if (
+      this.table_name_to_change.to.toLowerCase() ===
+      this.table_name_to_change.from.toLowerCase()
+    ) {
       this.updatePopUp({ type: "warning", message: "Using this same name" });
-    }else{
+    } else {
       this.setState({ is_loading_change_table_name: true });
       HTTPCalls(
         "POST",
@@ -157,15 +186,12 @@ class TableView extends React.Component {
             sessionStorage.getItem(Global["APP_KEY"])
           ),
           db_name: this.db,
-          table_name: this.table_name_to_change
+          table_name: this.table_name_to_change,
         },
         (res) => {
           this.setState({
             response: {
-              type:
-                res["status"] === 400
-                  ? "error"
-                  : "success",
+              type: res["status"] === 400 ? "error" : "success",
               message: res["response"],
             },
             is_loading_change_table_name: false,
@@ -274,7 +300,7 @@ class TableView extends React.Component {
           {this.state.tables.map((table, index) => {
             let last_modified_date = new Date(table.modify_date);
             let date_created = new Date(table.create_date);
-            let url = `/data?db=${this.db}&table=${table.table_name}`
+            let url = `/data?db=${this.db}&table=${table.table_name}`;
             return (
               <div key={index} className="col-3 custom-card">
                 <label className="center-label db-name-label">
@@ -282,9 +308,17 @@ class TableView extends React.Component {
                 </label>
                 <hr className="header-hr" />
                 <label className="center-label">Date Last Modified</label>
-                <label className="center-label">{last_modified_date.toLocaleDateString() + " " + last_modified_date.toLocaleTimeString()}</label>
+                <label className="center-label">
+                  {last_modified_date.toLocaleDateString() +
+                    " " +
+                    last_modified_date.toLocaleTimeString()}
+                </label>
                 <label className="center-label">Date Created</label>
-                <label className="center-label">{date_created.toLocaleDateString() + " " + date_created.toLocaleTimeString()}</label>
+                <label className="center-label">
+                  {date_created.toLocaleDateString() +
+                    " " +
+                    date_created.toLocaleTimeString()}
+                </label>
                 <br />
                 <a href={url}>
                   <div className="button view-more-button">View Entries</div>
