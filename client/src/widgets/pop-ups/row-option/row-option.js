@@ -41,6 +41,7 @@ function RowOptions(props) {
           <table>
             <thead>
               <tr>
+                <th>Data Type</th>
                 <th>Column name</th>
                 <th>Old Value</th>
                 <th>New Value</th>
@@ -48,12 +49,17 @@ function RowOptions(props) {
             </thead>
             <tbody>
               {props.row_options.map((row_option, index) => {
-                let modified_row_option = row_option === null ? "NULL" : row_option;
+                let modified_row_option =
+                  row_option === null ? "NULL" : row_option;
                 modified_row_option = modified_row_option.toString().trim();
-                modified_row_option = modified_row_option.length > 0 ? modified_row_option : "Empty String";
-                
+                modified_row_option =
+                  modified_row_option.length > 0
+                    ? modified_row_option
+                    : "Empty String";
+
                 return (
                   <tr key={index}>
+                    <td>{props.data_type[props.keys[index]]}</td>
                     <td>{props.keys[index]}</td>
                     <td>{modified_row_option}</td>
                     <td>

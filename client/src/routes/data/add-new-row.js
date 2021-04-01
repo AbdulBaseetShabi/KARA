@@ -8,6 +8,7 @@ function AddNewRow(props) {
           <table>
             <thead>
               <tr>
+                <th>Data Type</th>
                 <th>Column name</th>
                 <th>Value</th>
               </tr>
@@ -16,6 +17,7 @@ function AddNewRow(props) {
               {props.keys.map((column, index) => {
                 return (
                   <tr key={index}>
+                    <td>{props.data_type[column]}</td>
                     <td>{column}</td>
                     <td>
                       <input

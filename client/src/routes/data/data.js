@@ -60,6 +60,7 @@ class Data extends React.Component {
     this.new_row_values = {};
     this.keys = [];
     this.data = [];
+    this.data_type = [];
     this.edit_row_number = null;
     this.row_to_delete = null;
   }
@@ -77,8 +78,10 @@ class Data extends React.Component {
         if (res["status"] === 200) {
           const response = res["response"];
           let data = response.length > 0 ? convertObjectToArray(res["response"]) : [];
+          console.log(res);
           this.keys = response.length > 0 ? data["keys"] : res["row_headers"];
           this.data = response.length > 0 ? data["data"] : [];
+          this.data_type = res["data_type"];
           this.setState({ entries: res["response"] });
         } else {
           this.updatePopUp({ type: "error", message: res["response"] });
@@ -125,7 +128,6 @@ class Data extends React.Component {
       })
     }
 
-    console.log(row);
     HTTPCalls(
       "POST",
       "/table/remove",
@@ -205,6 +207,7 @@ class Data extends React.Component {
           updateRowValue={this.updateRowValue}
           saveChanges={this.saveChanges}
           openDeleteModal={this.changeDeleteModalState}
+          data_type={this.data_type}
         ></RowOptions>
         <AddNewRow
           show={this.state.should_show_add_row}
@@ -213,6 +216,7 @@ class Data extends React.Component {
           shouldShowAddRow={this.shouldShowAddRow}
           keys={this.keys}
           loading={this.state.is_loading_add_new_row}
+          data_type={this.data_type}
         />
         <DeletePopUp
           show={this.state.show_delete_prompt}

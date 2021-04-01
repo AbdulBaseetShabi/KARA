@@ -434,17 +434,22 @@ def get_table_entries():
             connector.execute(get_query)
 
             row_headers = [x[0] for x in connector.description()]
-
+            row_headers_data_type = [str(x[1]) for x in connector.description()]
             rows = connector.fetchall()
 
             result = []
+            data_type = {}
             
             for row in rows:
                 result.append(dict(zip(row_headers, row)))
             
-            if len(result) == 0:
-                return jsonify({'status': 200, 'response': result, 'row_headers': row_headers}) 
-            return jsonify({'status': 200, 'response': result})
+            for (index, dataType) in enumerate(row_headers_data_type):
+                key = row_headers[index]
+                value_array = dataType.split(" ")
+                value = value_array[1][1:-2]
+                data_type[key] = value
+
+            return jsonify({'status': 200, 'response': result, 'row_headers': row_headers, 'data_type': data_type}) 
         else:
             return jsonify({'status': 400, 'response': '[' + db_name + '].' + table_name + ' does not exist!'})
     except Exception as e:
