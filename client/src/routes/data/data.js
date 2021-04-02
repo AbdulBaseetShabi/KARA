@@ -24,6 +24,17 @@ function convertObjectToArray(data) {
   return return_value;
 }
 
+function convertArrayToObject(array) {
+  let object = {new_queries: [], old_queries: []};
+  for (let i = 0; i < array.length; i++) {
+    let column_name = array[i]['column_name']
+    object['old_queries'].push({column: column_name, value: array[i]['old_value']})
+    object['new_queries'].push({column: column_name, value: array[i]['new_value']})
+  }
+
+  return object;
+}
+
 class Data extends React.Component {
   constructor(props) {
     super(props);
@@ -45,6 +56,7 @@ class Data extends React.Component {
       is_loading: false,
       show_delete_prompt: false,
       is_loading_add_new_row: false,
+      is_updating_row: false,
       should_show_add_row: false,
     };
     this.deleteRow = this.deleteRow.bind(this);
@@ -69,8 +81,7 @@ class Data extends React.Component {
     HTTPCalls(
       "POST",
       "/table/entries",
-      {
-        user_credential: JSON.parse(sessionStorage.getItem(Global["APP_KEY"])),
+      {        user_credential: JSON.parse(sessionStorage.getItem(Global["APP_KEY"])),
         db_name: this.db,
         table_name: this.table_name
       },
@@ -159,6 +170,8 @@ class Data extends React.Component {
   }
 
   saveChanges() {
+    this.setState({is_updating_row: true})
+    console.log(this.updated_row_values)
     this.updated_row_values = this.updated_row_values.map((row) => {
       if (row["old_value"].length === 0 && row["new_value"].length === 0) {
         let index = this.keys.indexOf(row["column_name"]);
@@ -173,9 +186,35 @@ class Data extends React.Component {
         return row;
       }
     });
-    console.log(this.updated_row_values);
-    this.updatePopUp({ type: "error", message: "Error Occured" });
-    this.shouldShowRowOptions([], false, null);
+
+    let body = convertArrayToObject(this.updated_row_values);
+    console.log(body);
+
+    HTTPCalls(
+      "POST",
+      "/table/update",
+      {
+        user_credential: JSON.parse(
+          sessionStorage.getItem(Global["APP_KEY"])
+        ),
+        db_name: this.db,
+        table_name: this.table_name,
+        new_queries: body['new_queries'],
+        old_queries: body['old_queries']
+      },
+      (res) => {
+        this.setState({
+          response: {
+            type:
+              res["status"] === 400
+                ? "error"
+                : "success",
+            message: res["response"],
+          },
+          is_updating_row: false,
+        });
+      }
+    );
   }
 
   updatePopUp(response) {
@@ -208,6 +247,7 @@ class Data extends React.Component {
           saveChanges={this.saveChanges}
           openDeleteModal={this.changeDeleteModalState}
           data_type={this.data_type}
+          loading={this.state.is_updating_row}
         ></RowOptions>
         <AddNewRow
           show={this.state.should_show_add_row}

@@ -350,10 +350,8 @@ def delete_row():
                            delete_sql += query['column'] + " = {}".format(value)
 
                 delete_sql += ";"
-                
-                print(delete_sql)
+
                 connector.execute(delete_sql)
-                
                 connector.commit()
 
                 return jsonify({'status': 200, 'response': str(connector.rowcount()) + ' row(s) deleted from table named ' + table_name + ' in the database named ' + db_name})
@@ -362,7 +360,6 @@ def delete_row():
         else:
             return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'}) 
     except Exception as e:
-        print(e)
         return jsonify({'status': 400, 'response': str(e)})
 
 @app.route('/table/find', methods=['GET'])
@@ -419,6 +416,58 @@ def find_row():
     else:
        return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})    
 
+@app.route('/table/update', methods=['POST'])
+def update_row():
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth, True)
+
+        db_name = request.get_json()['db_name']
+        table_name = request.get_json()['table_name']
+        new_queries = request.get_json()['new_queries']
+        old_queries = request.get_json()['old_queries']
+
+        if connector.check_db(db_name):
+            if connector.check_table(db_name, table_name):
+                use_db = "USE " + "[" + db_name + "]"
+                connector.execute(use_db)
+                
+                update_sql = "UPDATE TOP (1) " + "[dbo].[" + table_name + "]" + " SET "
+
+                for (index, query) in enumerate(new_queries):
+                    value = query['value'] if query['value'] is not None else "NULL"
+                    value = value if not isinstance(value, str) else "'{}'".format(value)
+                    if index != len(new_queries) - 1:
+                        update_sql += query['column'] + " = {}, ".format(value)
+                    else:
+                        update_sql += query['column'] + " = {} WHERE ".format(value)
+                
+                for (index, query) in enumerate(old_queries):
+                    value = query['value']
+                    value = value if not isinstance(value, str) else "'{}'".format(value)
+                    if index != len(old_queries) - 1:
+                        if value is None:
+                            update_sql += query['column'] + " IS NULL AND "
+                        else:
+                            update_sql += query['column'] + " = {} AND ".format(value)
+                    else:
+                        if value is None:
+                            update_sql += query['column'] + " IS NULL"
+                        else:    
+                           update_sql += query['column'] + " = {}".format(value)
+
+                update_sql += ";"
+                
+                connector.execute(update_sql)
+                
+                connector.commit()
+                return jsonify({'status': 200, 'response': str(connector.rowcount()) + ' row(s) updated from table named ' + table_name + ' in the database named ' + db_name})
+            else:
+                return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' does not exist in the database named ' + db_name + '!'})
+        else:
+            return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'}) 
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
 @app.route('/table/entries', methods=['POST'])
 def get_table_entries():
     try:
