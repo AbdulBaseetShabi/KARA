@@ -11,11 +11,26 @@ function RowOptions(props) {
               className="col"
               type="button"
               style={{ margin: "0 auto" }}
-              onClick={() => {
-                props.saveChanges();
-              }}
+              onClick={
+                props.loading
+                  ? null
+                  : () => {
+                      props.saveChanges();
+                    }
+              }
             >
-              Save Changes
+              {props.loading ? (
+                <label style={{ paddingTop: "7px" }}>
+                  <span
+                    className="spinner-border spinner-border-sm"
+                    aria-hidden="true"
+                    style={{ margin: "0 5px 3.5px 0px" }}
+                  ></span>
+                  Loading
+                </label>
+              ) : (
+                "Save Changes"
+              )}
             </button>
             <button
               className="col"
@@ -84,11 +99,26 @@ function RowOptions(props) {
               className="col"
               type="button"
               style={{ margin: "0 auto" }}
-              onClick={() => {
-                props.saveChanges();
-              }}
+              onClick={
+                props.loading
+                  ? null
+                  : () => {
+                      props.saveChanges();
+                    }
+              }
             >
-              Save Changes
+              {props.loading ? (
+                <label style={{ paddingTop: "7px" }}>
+                  <span
+                    className="spinner-border spinner-border-sm"
+                    aria-hidden="true"
+                    style={{ margin: "0 5px 3.5px 0px" }}
+                  ></span>
+                  Loading
+                </label>
+              ) : (
+                "Save Changes"
+              )}
             </button>
             <button
               className="col"
