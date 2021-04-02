@@ -224,6 +224,7 @@ class TableView extends React.Component {
           openModal={this.changeAddTableModalState}
           loading={this.state.is_loading_add_new_table}
           addTable={this.addTable}
+          db={this.db}
         />
         {this.state.show_change_table_name_view ? (
           <div className="modal-options">

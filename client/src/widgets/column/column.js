@@ -2,6 +2,12 @@ import React from "react";
 import "./column.css";
 
 function Column(props) {
+  let tables = props.foreign_keys.find((value) => {
+    return props.reference_table_name === value["table_name"];
+  });
+
+  let columns = tables === undefined ? [] : tables["columns"];
+
   return (
     <div className="column-to-edit">
       <div className="row">
@@ -149,27 +155,42 @@ function Column(props) {
           </div>
         )}
 
-        {props.column.constraints.foreign_key.is_foreign_key_selected &&
-        (props.column.constraints.foreign_key.reference_table_name.length ===
-          0 ||
-          props.column.constraints.foreign_key.reference_column_name.length ===
-            0) ? (
+        {props.column.constraints.foreign_key.is_foreign_key_selected ? (
           <div
             className="d-flex justify-content-center"
             style={{ marginTop: "4px", padding: "2px" }}
           >
             <label>References -{">"} </label>
             <label>[Table]: </label>
-            <select>
-              <option>Table 1</option>
-              <option>Table 2</option>
-              <option>Table 3</option>
+            <select
+              name="reference_table_name"
+              data-key={props.index}
+              onChange={props.handleInputChange}
+              value={props.reference_table_name}
+            >
+              {props.foreign_keys.map((foreign_key, index) => {
+                let key = foreign_key["table_name"];
+                return (
+                  <option key={index} value={key}>
+                    {key}
+                  </option>
+                );
+              })}
             </select>
             <label>.Column: </label>
-            <select>
-              <option>Column 1</option>
-              <option>Column 2</option>
-              <option>Column 3</option>
+            <select
+              name="reference_column_name"
+              data-key={props.index}
+              onChange={props.handleInputChange}
+              value={props.reference_column_name}
+            >
+              {columns.map((column, index) => {
+                return (
+                  <option key={index} value={column}>
+                    {column}
+                  </option>
+                );
+              })}
             </select>
           </div>
         ) : null}
