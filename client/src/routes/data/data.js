@@ -120,13 +120,27 @@ class Data extends React.Component {
     this.setState({ row_options: row, show_row_option: boolean });
   }
 
-  updateRowValue(index, oldValue, newValue) {
+  updateRowValue(index, data_type, oldValue, newValue) {
     this.updated_row_values[index]["old_value"] = oldValue;
-    this.updated_row_values[index]["new_value"] = newValue;
+    
+    if (data_type === 'bool') {
+      this.updated_row_values[index]["new_value"] = newValue.toLowerCase() === 'true'
+    }else if(data_type === 'int'){
+      this.updated_row_values[index]["new_value"] = parseInt(newValue);
+    }else{
+      this.updated_row_values[index]["new_value"] = newValue;
+    }
   }
 
-  updateAddRowValue(column, value) {
-    this.new_row_values[column] = value;
+  updateAddRowValue(column, data_type, value) {
+    if (data_type === 'bool') {
+      this.new_row_values[column] = value.toLowerCase() === 'true'
+    }else if(data_type === 'int'){
+      this.new_row_values[column] = parseInt(value);
+    }else{
+      this.new_row_values[column] = value;
+    }
+    console.log(this.new_row_values)
   }
 
   deleteRow() {
@@ -233,6 +247,37 @@ class Data extends React.Component {
   addRow() {
     console.log(this.new_row_values);
     this.setState({ is_loading_add_new_row: true });
+
+    let columns = Object.keys(this.new_row_values)
+    let values = columns.map((column) => {
+      return this.new_row_values[column];
+    })
+    
+    HTTPCalls(
+      "POST",
+      "/table/add",
+      {
+        user_credential: JSON.parse(
+          sessionStorage.getItem(Global["APP_KEY"])
+        ),
+        db_name: this.db,
+        table_name: this.table_name,
+        columns: columns,
+        values: values
+      },
+      (res) => {
+        this.setState({
+          response: {
+            type:
+              res["status"] === 400
+                ? "error"
+                : "success",
+            message: res["response"],
+          },
+          is_loading_add_new_row: false
+        });
+      }
+    );
   }
 
   render() {

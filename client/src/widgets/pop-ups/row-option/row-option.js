@@ -71,18 +71,19 @@ function RowOptions(props) {
                   modified_row_option.length > 0
                     ? modified_row_option
                     : "Empty String";
-
+                let data_type = props.data_type[props.keys[index]];
                 return (
                   <tr key={index}>
-                    <td>{props.data_type[props.keys[index]]}</td>
+                    <td>{data_type}</td>
                     <td>{props.keys[index]}</td>
                     <td>{modified_row_option}</td>
                     <td>
                       <input
-                        type="text"
+                        type= "text"
                         onChange={(e) => {
                           props.updateRowValue(
                             index,
+                            data_type,
                             row_option,
                             e.target.value
                           );

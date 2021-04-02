@@ -15,15 +15,16 @@ function AddNewRow(props) {
             </thead>
             <tbody>
               {props.keys.map((column, index) => {
+                let data_type = props.data_type[column];
                 return (
                   <tr key={index}>
-                    <td>{props.data_type[column]}</td>
+                    <td>{data_type}</td>
                     <td>{column}</td>
                     <td>
                       <input
                         type="text"
                         onChange={(e) => {
-                          props.updateAddRowValue(column, e.target.value);
+                          props.updateAddRowValue(column, data_type, e.target.value);
                         }}
                       ></input>
                     </td>

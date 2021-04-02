@@ -279,45 +279,52 @@ def delete_table():
 
 @app.route('/table/add', methods=['POST'])
 def add_row():
-    connector = Connector()
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth)
 
-    db_name = request.json['db_name']
-    table_name = request.json['table_name']
-    columns = request.json['columns']
-    values = request.json['values']
+        db_name = request.get_json()['db_name']
+        table_name = request.get_json()['table_name']
+        columns = request.get_json()['columns']
+        values = request.get_json()['values']
 
-    if connector.check_db(db_name):
-        if connector.check_table(db_name, table_name):
-            use_db = "USE " + "`" + db_name + "`"
-            connector.execute(use_db)
+        if connector.check_db(db_name):
+            if connector.check_table(db_name, table_name):
+                use_db = "USE " + "[" + db_name + "]"
+                connector.execute(use_db)
 
-            add_sql = "INSERT INTO " + "`" + table_name + "` ("
+                add_sql = "INSERT INTO " + "[dbo].[" + table_name + "] ("
 
-            for (index, column) in enumerate(columns):
-                if index != len(columns) - 1:
-                    add_sql += column + ","
-                else:
-                    add_sql += column
+                for (index, column) in enumerate(columns):
+                    if index != len(columns) - 1:
+                        add_sql += column + ","
+                    else:
+                        add_sql += column
 
-            add_sql += ") VALUES ("
+                add_sql += ") VALUES ("
 
-            for (index, column) in enumerate(columns):
-                if index != len(columns) - 1:
-                    add_sql += "?, "
-                else:
-                    add_sql += "?"
+                for (index, value) in enumerate(values):
+                    value = value if not isinstance(value, str) else "'{}'".format(value)
 
-            add_sql += ");"
+                    if index != len(values) - 1:
+                        add_sql += "{}, ".format(value)
+                    else:
+                        add_sql += "{}".format(value)
 
-            connector.execute(add_sql, values)
+                add_sql += ");"
 
-            connector.commit()
+                print(add_sql)
+                connector.execute(add_sql)
 
-            return jsonify({'status': 200, 'response': 'Record with ID ' + str(connector.lastrowid()) + ' added to table named ' + table_name + ' in the database named ' + db_name})
+                connector.commit()
+
+                return jsonify({'status': 200, 'response': str(connector.rowcount()) + ' row(s) added to table named ' + table_name + ' in the database named ' + db_name})
+            else:
+                return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' does not exist in the database named ' + db_name + '!'})
         else:
-            return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' does not exist in the database named ' + db_name + '!'})
-    else:
-       return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'}) 
+            return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'}) 
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
 
 @app.route('/table/remove', methods=['POST'])
 def delete_row():
@@ -338,6 +345,7 @@ def delete_row():
 
                 for (index, query) in enumerate(queries):
                     value = query['value']
+                    value = value if not isinstance(value, str) else "'{}'".format(value)
                     if index != len(queries) - 1:
                         if value is None:
                             delete_sql += query['column'] + " IS NULL AND "
@@ -468,6 +476,7 @@ def update_row():
             return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'}) 
     except Exception as e:
         return jsonify({'status': 400, 'response': str(e)})
+
 @app.route('/table/entries', methods=['POST'])
 def get_table_entries():
     try:
