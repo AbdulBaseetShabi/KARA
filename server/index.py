@@ -133,6 +133,36 @@ def rename_db():
         return jsonify({'status': 400, 'response': str(e)})
 
 #### Table Routes
+@app.route('/table/metadata', methods=['POST'])
+def get_tables_and_columns():
+    try:
+        user_auth = request.get_json()["user_credential"]
+        connector = User_Auth(user_auth)
+
+        db_name = request.get_json()['db_name']
+
+        if connector.check_db(db_name):
+            use_db = "USE " + "[" + db_name + "]"
+            connector.execute(use_db)
+            
+            get_query = "SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS ORDER BY TABLE_NAME ASC;"
+            connector.execute(get_query)
+
+            row_headers = [x[0] for x in connector.description()]
+
+            rows = connector.fetchall()
+
+            result = []
+
+            for row in rows:
+                result.append(dict(zip(row_headers, row)))
+
+            return jsonify({'status': 200, 'response': result})
+        else:
+            return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})
+    except Exception as e:
+        return jsonify({'status': 400, 'response': str(e)})
+
 @app.route('/table/info', methods=['POST'])
 def get_tables():
     try:
@@ -227,7 +257,7 @@ def create_table():
                     reference_table_name = column['constraints']['foreign_key']['reference_table_name']
                     reference_column_name = column['constraints']['foreign_key']['reference_column_name']
                     if connector.check_table(db_name, reference_table_name):
-                        create_sql += ", FOREIGN KEY (" + column['name'] + ") REFERENCES " + reference_table_name + "(" + reference_column_name + ")"
+                        create_sql += ", FOREIGN KEY (" + column['name'] + ") REFERENCES [dbo].[" + reference_table_name + "](" + reference_column_name + ")"
                     else:
                         return jsonify({'status': 400, 'response': 'There is no Table named [' + reference_table_name + ']' + 'with Column named [' +  reference_column_name +'] in the Database named [' + db_name + ']!'})
                 if index != len(columns) - 1:
