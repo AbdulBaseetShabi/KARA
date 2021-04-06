@@ -196,7 +196,7 @@ def get_tables():
 def rename_table():
     try:
         user_auth = request.get_json()["user_credential"]
-        connector = User_Auth(user_auth)
+        connector = User_Auth(user_auth, True)
 
         db_name = request.get_json()["db_name"]
         original_table_name = request.get_json()['table_name']['from']
