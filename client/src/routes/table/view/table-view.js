@@ -332,9 +332,9 @@ class TableView extends React.Component {
                 >
                   Change name
                 </div>
-                <a href="/table/edit">
+                {/* <a href="/table/edit">
                   <div className="button edit-button">Edit</div>
-                </a>
+                </a> */}
                 <div
                   className="button delete-button"
                   onClick={() => {

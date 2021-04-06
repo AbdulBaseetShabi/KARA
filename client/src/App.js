@@ -45,9 +45,9 @@ class App extends React.Component {
           <Route exact path="/table/view">
             <TableView />
           </Route>
-          <Route exact path="/table/edit">
+          {/* <Route exact path="/table/edit">
             <TableEdit />
-          </Route>
+          </Route> */}
           <Route exact path="/databases/view">
             <DatabasesView />
           </Route>
