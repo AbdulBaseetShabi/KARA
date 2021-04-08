@@ -380,15 +380,18 @@ def delete_row():
                         if value is None:
                             delete_sql += query['column'] + " IS NULL AND "
                         else:
-                            delete_sql += query['column'] + " = {} AND ".format(value)
+                            second_part = " = {} AND ".format(value) if not isinstance(value,str) else " LIKE {} AND ".format(value)
+                            delete_sql += query['column'] + second_part
                     else:
                         if value is None:
                             delete_sql += query['column'] + " IS NULL"
                         else:    
-                           delete_sql += query['column'] + " = {}".format(value)
+                            second_part = " = {}".format(value) if not isinstance(value,str) else " LIKE {}".format(value)
+                            delete_sql += query['column'] + second_part
 
                 delete_sql += ";"
 
+                print(delete_sql)
                 connector.execute(delete_sql)
                 connector.commit()
 
@@ -487,15 +490,18 @@ def update_row():
                         if value is None:
                             update_sql += query['column'] + " IS NULL AND "
                         else:
-                            update_sql += query['column'] + " = {} AND ".format(value)
+                            second_part = " = {} AND ".format(value) if not isinstance(value,str) else " LIKE {} AND ".format(value)
+                            update_sql += query['column'] + second_part
                     else:
                         if value is None:
                             update_sql += query['column'] + " IS NULL"
                         else:    
-                           update_sql += query['column'] + " = {}".format(value)
+                            second_part = " = {} ".format(value) if not isinstance(value,str) else " LIKE {} ".format(value)
+                            update_sql += query['column'] + second_part
 
                 update_sql += ";"
                 
+                print(update_sql)
                 connector.execute(update_sql)
                 
                 connector.commit()
