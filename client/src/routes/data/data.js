@@ -121,12 +121,14 @@ class Data extends React.Component {
   }
 
   updateRowValue(index, data_type, oldValue, newValue) {
-    this.updated_row_values[index]["old_value"] = oldValue;
+    this.updated_row_values[index]["old_value"] = oldValue === true ? 1 : oldValue === false ? 0 : oldValue;
     
     if (data_type === 'bool') {
-      this.updated_row_values[index]["new_value"] = newValue.toLowerCase() === 'true'
+      this.updated_row_values[index]["new_value"] = newValue.toLowerCase() === 'true' ? 1 : 0;
     }else if(data_type === 'int'){
       this.updated_row_values[index]["new_value"] = parseInt(newValue);
+    }else if(data_type === 'float'){
+      this.updated_row_values[index]["new_value"] = parseFloat(newValue);
     }else{
       this.updated_row_values[index]["new_value"] = newValue;
     }
@@ -134,7 +136,7 @@ class Data extends React.Component {
 
   updateAddRowValue(column, data_type, value) {
     if (data_type === 'bool') {
-      this.new_row_values[column] = value.toLowerCase() === 'true'
+      this.new_row_values[column] = value.toLowerCase() === 'true' ? 1 : 0;
     }else if(data_type === 'int'){
       this.new_row_values[column] = parseInt(value);
     }else{

@@ -3,7 +3,7 @@ import HTTPCalls from "../../../services/api-connect";
 import Global from "../../../services/global";
 import Column from "../../../widgets/column/column";
 
-const data_type = ["int", "boolean", "varchar"];
+const data_type = ["int", "bit", "text", "float", "varchar"];
 const column_representation = {
   name: "",
   allows_null: false,
