@@ -528,7 +528,7 @@ def get_table_entries():
             connector.execute(get_query)
 
             row_headers = [x[0] for x in connector.description()]
-            row_headers_data_type = [str(x[1]) for x in connector.description()]
+            row_headers_data_type = [{'name': str(x[1]), 'size': x[3]} for x in connector.description()]
             rows = connector.fetchall()
 
             result = []
@@ -539,10 +539,10 @@ def get_table_entries():
             
             for (index, dataType) in enumerate(row_headers_data_type):
                 key = row_headers[index]
-                value_array = dataType.split(" ")
+                value_array = dataType['name'].split(" ")
                 value = value_array[1][1:-2]
-                data_type[key] = value
-
+                data_type[key] = {'type': value, 'size': dataType['size']}
+            
             return jsonify({'status': 200, 'response': result, 'row_headers': row_headers, 'data_type': data_type}) 
         else:
             return jsonify({'status': 400, 'response': '[' + db_name + '].' + table_name + ' does not exist!'})

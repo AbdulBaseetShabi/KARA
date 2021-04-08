@@ -9,6 +9,7 @@ function AddNewRow(props) {
             <thead>
               <tr>
                 <th>Data Type</th>
+                <th>Size</th>
                 <th>Column name</th>
                 <th>Value</th>
               </tr>
@@ -16,9 +17,12 @@ function AddNewRow(props) {
             <tbody>
               {props.keys.map((column, index) => {
                 let data_type = props.data_type[column];
+                let type = data_type['type']
+                let size = data_type['size']
                 return (
                   <tr key={index}>
-                    <td>{data_type}</td>
+                    <td>{type}</td>
+                    <td>{type === 'str' && size !== 2147483647 ? size : "N/A"}</td>
                     <td>{column}</td>
                     <td>
                       <input

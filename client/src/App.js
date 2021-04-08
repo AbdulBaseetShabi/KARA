@@ -10,7 +10,7 @@ import "./App.css";
 import NavigationBar from "./widgets/navigation-bar/navigation-bar";
 import DatabasesView from "./routes/databases/view/databases-view";
 import TableView from "./routes/table/view/table-view";
-import TableEdit from "./routes/table/edit/table-edit";
+// import TableEdit from "./routes/table/edit/table-edit";
 import Home from "./routes/home/home";
 import Footer from "./widgets/footer/footer";
 import Data from "./routes/data/data";
