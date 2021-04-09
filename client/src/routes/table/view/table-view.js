@@ -6,6 +6,7 @@ import PopUp from "../../../widgets/pop-ups/message-pop-up/pop-ups";
 import AddNewTable from "./add-new-table";
 import "./table-view.css";
 
+
 class TableView extends React.Component {
   constructor(props) {
     super(props);
@@ -298,9 +299,9 @@ class TableView extends React.Component {
         </label>
         <hr className="header-hr" />
         <div className="row d-flex justify-content-center">
-          {this.state.tables.map((table, index) => {
-            let last_modified_date = new Date(table.modify_date);
+          {this.state.tables.map((table, index) => {            
             let date_created = new Date(table.create_date);
+            date_created.setTime(date_created.getTime() + 4*60*60*1000);
             let url = `/data?db=${this.db}&table=${table.table_name}`;
             return (
               <div key={index} className="col-3 custom-card">
@@ -308,12 +309,6 @@ class TableView extends React.Component {
                   {table.table_name}
                 </label>
                 <hr className="header-hr" />
-                <label className="center-label">Date Last Modified</label>
-                <label className="center-label">
-                  {last_modified_date.toLocaleDateString() +
-                    " " +
-                    last_modified_date.toLocaleTimeString()}
-                </label>
                 <label className="center-label">Date Created</label>
                 <label className="center-label">
                   {date_created.toLocaleDateString() +
