@@ -403,60 +403,6 @@ def delete_row():
     except Exception as e:
         return jsonify({'status': 400, 'response': str(e)})
 
-@app.route('/table/find', methods=['GET'])
-def find_row():
-    connector = Connector()
-
-    db_name = request.json['db_name']
-    table_name = request.json['table_name']
-    columns = request.json['columns'] if len(request.json['columns']) > 0 else None
-    queries = request.json['queries'] if len(request.json['queries']) > 0 else None
-
-    if connector.check_db(db_name):
-        if connector.check_table(db_name, table_name):
-            use_db = "USE " + "`" + db_name + "`"
-            connector.execute(use_db)
-
-            select_sql = "SELECT "
-
-            if columns != None:
-                for (index, column) in enumerate(columns):
-                    if index != len(columns) - 1:
-                        select_sql += column + ", "
-                    else:
-                        select_sql += column + " "
-            else:
-                select_sql += "* "
-
-            select_sql += "FROM " + "`" + table_name + "`"
-
-            if queries != None:
-                select_sql += " WHERE "
-                for (index, query) in enumerate(queries):
-                    if index != len(queries) -1:
-                        select_sql += query['column'] + " " + query['relation'] + " '" + query['value'] + "' AND "
-                    else:
-                        select_sql += query['column'] + " " + query['relation'] + " '" + query['value'] + "';"
-            else:
-                select_sql += ";"
-
-            connector.execute(select_sql)
-
-            row_headers = [x[0] for x in connector.description()]
-
-            rows = connector.fetchall()
-
-            result = []
-
-            for row in rows:
-                result.append(dict(zip(row_headers, row)))
-
-            return jsonify({'status': 200, 'response': result})
-        else:
-            return jsonify({'status': 400, 'response': 'Table named ' + table_name + ' does not exist in the database named ' + db_name + '!'})
-    else:
-       return jsonify({'status': 400, 'response': 'Database named ' + db_name + ' does not exist!'})    
-
 @app.route('/table/update', methods=['POST'])
 def update_row():
     try:
