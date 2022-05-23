@@ -1,13 +1,13 @@
 # KARA
 ## Table of Content 
- - [About The Application](#about-the-application)
+ - [About](#about)
  - [Inspiration](#inspiration)
  - [Technologies](#technologies)
  - [Client Pages](#client-pages)
  - [Server Routes](#server-routes) 
  - [Usage](#usage)
 
-### About the Application 
+### About
 ---
 KARA is a web application that allows its user to perform basic SQL operations on their local MSSQL servers.
 
@@ -19,7 +19,7 @@ before ever interacting with databases. We hope to alleviate this constraint by 
 ### Technologies 
 ---
 - **The Client side** was built on ***Reactjs*** for the view.
-- **The Server side** was built with ***Python*** and ***SQL***
+- **The Server side** was built with ***Python***, ***MSSQL Server*** and ***SQL***
 
 ### Client Pages 
 --- 
